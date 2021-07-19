@@ -1,0 +1,54 @@
+<div th:fragment="navtop">
+    <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+        <div class="container-fluid">
+            <div class="row" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
+                <form th:action="@{/changeperiod}" th:method="GET">
+                    <select class="border rounded shadow custom-select custom-select-sm"
+                            style="height: 34px;width: 110px;"
+                            th:onchange="this.form.submit()"
+                            id="period1" name="period">
+                        <option th:each="period : ${periods}"
+                                th:selected="${period.getRn()}==${currentPeriod}"
+                                th:value="${period.getRn()}"
+                                th:text="${period}">
+                        </option>
+                    </select>
+                </form>
+                <form th:action="@{/changepodstation}" th:method="GET">
+                    <select class="border rounded shadow custom-select custom-select-sm"
+                            style="height: 34px;width: 120px;"
+                            th:onchange="this.form.submit()" id="podstation1" name="podstation">
+                        <option th:each="basicPodstation : ${basicPodstationLabels}"
+                                th:selected="${basicPodstation.getRn()}==${currentPodstation.getRn()}"
+                                th:value="${basicPodstation.getRn()}"
+                                th:text="${basicPodstation}">
+                        </option>
+                    </select>
+                </form>
+                <form th:action="@{/searchpodstation}" th:method="GET">
+                    <div class="text-primary input-group" style="width: 300px;">
+                        <select class="shadow custom-select custom-select-sm" style="width: 60;height: 34px;" id="type1"
+                                name="podstType">
+                            <option th:each="podstationType : ${podstationTypes}"
+                                    th:value="${podstationType}"
+                                    th:selected="${podstationType}==${currentPodstation.getPodstType()}"
+                                    th:text="${podstationType}">
+                            </option>
+                        </select>
+                        <input class="shadow form-control small" type="number" placeholder="Поиск по номеру.."
+                               style="width: 151px;height: 34px;"
+                               th:name="podstationNum">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary py-0" type="submit">
+                                <i class="fas fa-search shadow"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div style="color:red;font-weight:bold" th:text="${error}" th:if="${error}"></div>
+            </div>
+
+            <p style="margin: 0px;" th:text="${resName}">Участок</p>
+        </div>
+    </nav>
+</div>
