@@ -45,10 +45,10 @@
                         </div>
                     </div>
                 </form>
-                <div style="color:red;font-weight:bold" th:text="${error}" th:if="${error}"></div>
             </div>
 
             <p style="margin: 0px;" th:text="${resName}">Участок</p>
         </div>
     </nav>
+    <div align="center" style="color:red;font-weight:bold;" th:text="${errorMessage}" th:if="${errorMessage}"></div>
 </div>

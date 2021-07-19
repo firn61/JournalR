@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.donenergo.journalr.services.Activity;
 import ru.donenergo.journalr.services.CommonService;
@@ -29,9 +30,15 @@ public class PodstationController implements IPodstationController {
     @Override
     public String changePeriod(Model model, @RequestParam(value = "period") Integer period) {
         commonService.refreshCommonValues(period);
+        podstationService.getCurrentPodstationFromNewPeriod(period);
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        return "redirect:/displaypodstation";
+    }
+
+    @GetMapping("/displaypodstation")
+    public String displayPodstation(Model model, @RequestParam(value = "rn") Integer rn){
         commonService.setDataToModel(model);
         hostRestrictionService.setDataToModel(model);
-        podstationService.getCurrentPodstationFromNewPeriod(period);
         podstationService.setDataToModel(model);
         return commonService.getViewName();
     }
@@ -42,14 +49,22 @@ public class PodstationController implements IPodstationController {
             commonService.setActivity(Activity.SHOW_PODSTATION);
         }
         podstationService.updatePodstationByRn(rn);
-        commonService.setDataToModel(model);
-        hostRestrictionService.setDataToModel(model);
-        podstationService.setDataToModel(model);
-        return commonService.getViewName();
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        return "redirect:/displaypodstation";
     }
 
     @Override
-    public String searchPodstation() {
-        return null;
+    public String searchPodstation(Model model, @RequestParam(value = "podstType") String podstType,
+                                   @RequestParam(value = "podstationNum") Integer podstationNum) {
+        if (commonService.getActivity().equals(Activity.INDEX)) {
+            commonService.setActivity(Activity.SHOW_PODSTATION);
+        }
+        podstationService.getPodstationByNumAndType(podstationNum, podstType, commonService.getCurrentPeriod());
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        return "redirect:/displaypodstation";
+    }
+
+    public String switchEditPodstation(Model model){
+        return "redirect:/";
     }
 }

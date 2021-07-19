@@ -13,6 +13,6 @@ public interface IPodstationController {
     String changePodstation(Model model, Integer rn);
 
     @GetMapping("/searchpodstation")
-    String searchPodstation();
+    String searchPodstation(Model model, String podstType, Integer podstationNum);
 
 }

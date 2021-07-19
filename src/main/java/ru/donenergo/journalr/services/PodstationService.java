@@ -25,6 +25,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
     private Podstation currentPodstation;
     private final String normal = "";
     private final String intermediate = "_P";
+    private String errorMessage = "";
 
     @PostConstruct
     private void invokeValues() {
@@ -56,6 +57,10 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         return podstation;
     }
 
+    public int getCurrentPodstationRn() {
+        return currentPodstation.getRn();
+    }
+
     @Override
     public void updatePodstationByRn(int rn) {
         if (currentPodstation.getRn() != rn) {
@@ -65,7 +70,10 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
 
     @Override
     public void setDataToModel(Model model) {
+        model.addAttribute("errorMessage", errorMessage);
+        errorMessage = "";
         model.addAttribute("currentPodstation", currentPodstation);
+
     }
 
     @Override
@@ -74,8 +82,20 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
             Integer podstationRn = podstationDAO.getPodstationRn(currentPodstation.getNum(), currentPodstation.getPodstType(), period);
             currentPodstation = getPodstation(podstationRn);
         } catch (EmptyResultDataAccessException e) {
-
+            errorMessage = "Подстанция " + currentPodstation.getPodstType() + "-" + currentPodstation.getNum() + " не найдена в выбраном периоде";
         }
 
     }
+
+    public void getPodstationByNumAndType(int num, String podstType, int period){
+        try {
+            Integer podstationRn = podstationDAO.getPodstationRn(num, podstType, period);
+            currentPodstation = getPodstation(podstationRn);
+        } catch (EmptyResultDataAccessException e) {
+            errorMessage = "Подстанция " + podstType + "-" + num + " не найдена";
+        }
+
+    }
+
+
 }
