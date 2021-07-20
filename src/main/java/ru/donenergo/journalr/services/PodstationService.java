@@ -97,5 +97,10 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
 
     }
 
+    public void podstationRnCheck(int rn){
+        if(currentPodstation.getRn() != rn) {
+            System.out.println("NE");
+        }
+    }
 
 }

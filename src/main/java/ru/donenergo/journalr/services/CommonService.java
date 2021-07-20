@@ -76,6 +76,12 @@ public class CommonService implements ICommonService, IDataToModelSetter {
         }
     }
 
+    public void changeViewIfIndex(){
+        if (activity.equals(Activity.INDEX)) {
+            activity = Activity.SHOW_PODSTATION;
+        }
+    }
+
     @Override
     public List<BasicPodstation> getPodstationLabelsFromDB(int dateRn) {
         return commonDAO.getPodstationLabels(dateRn);

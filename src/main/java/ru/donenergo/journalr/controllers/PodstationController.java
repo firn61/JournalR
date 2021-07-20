@@ -27,44 +27,43 @@ public class PodstationController implements IPodstationController {
         this.podstationService = podstationService;
     }
 
-    @Override
-    public String changePeriod(Model model, @RequestParam(value = "period") Integer period) {
-        commonService.refreshCommonValues(period);
-        podstationService.getCurrentPodstationFromNewPeriod(period);
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/displaypodstation";
-    }
-
-    @GetMapping("/displaypodstation")
-    public String displayPodstation(Model model, @RequestParam(value = "rn") Integer rn){
+    private void wrapData(Model model){
         commonService.setDataToModel(model);
         hostRestrictionService.setDataToModel(model);
         podstationService.setDataToModel(model);
+    }
+
+    @Override
+    public String showPodstation(Model model, @RequestParam(value = "rn") int rn) {
+        podstationService.podstationRnCheck(rn);
+        wrapData(model);
+        return "showpodstation";
+    }
+
+    @Override
+    public String editPodstationValues(Model model, @RequestParam(value = "rn") int rn) {
+        podstationService.podstationRnCheck(rn);
+        wrapData(model);
+        return "editpodstationvalues";
+    }
+
+    @Override
+    public String editPodstationParams(Model model, @RequestParam(value = "rn") int rn) {
+        podstationService.podstationRnCheck(rn);
+        wrapData(model);
+        return "editpodstationparams";
+    }
+
+    @GetMapping("/displaypodstation")
+    public String displayPodstation(Model model, @RequestParam(value = "rn") int rn){
+        if (podstationService.getCurrentPodstationRn() != rn) {
+            System.out.println("not equals");
+        }
+        wrapData(model);
+//        commonService.setDataToModel(model);
+//        hostRestrictionService.setDataToModel(model);
+//        podstationService.setDataToModel(model);
         return commonService.getViewName();
     }
 
-    @Override
-    public String changePodstation(Model model, @RequestParam(value = "podstation") Integer rn) {
-        if (commonService.getActivity().equals(Activity.INDEX)) {
-            commonService.setActivity(Activity.SHOW_PODSTATION);
-        }
-        podstationService.updatePodstationByRn(rn);
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/displaypodstation";
-    }
-
-    @Override
-    public String searchPodstation(Model model, @RequestParam(value = "podstType") String podstType,
-                                   @RequestParam(value = "podstationNum") Integer podstationNum) {
-        if (commonService.getActivity().equals(Activity.INDEX)) {
-            commonService.setActivity(Activity.SHOW_PODSTATION);
-        }
-        podstationService.getPodstationByNumAndType(podstationNum, podstType, commonService.getCurrentPeriod());
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/displaypodstation";
-    }
-
-    public String switchEditPodstation(Model model){
-        return "redirect:/";
-    }
 }

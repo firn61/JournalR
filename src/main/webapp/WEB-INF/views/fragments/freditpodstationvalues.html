@@ -68,7 +68,6 @@
                                     <input type="hidden" th:field="*{transformators[__${tstat.index}__].iC}"/>
                                     <td><p th:text="${transformator.iN}"/></td>
                                     <input type="hidden" th:field="*{transformators[__${tstat.index}__].iN}"/>
-                                    <input type="hidden" th:field="*{transformators[__${tstat.index}__].linesCount}"/>
                                     <td><input type="datetime-local" class="border rounded shadow"
                                                th:field="*{transformators[__${tstat.index}__].dateTime}"
                                                th:disabled="${rightsMessage != 'Ok'}">
@@ -90,39 +89,39 @@
                                 </tr>
                                 <tr th:each="line, lstat : ${transformator.lines}">
                                     <input type="hidden"
-                                           th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].rn}"></input>
+                                           th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].rn}"></input>
                                     <input type="hidden"
-                                           th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].trRn}"></input>
+                                           th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].trRn}"></input>
                                     <input type="hidden"
-                                           th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].sectionNum}"></input>
+                                           th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].sectionNum}"></input>
                                     <td><p th:text="${line.num}"></p></td>
                                     <input type="hidden"
-                                           th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].num}"></input>
+                                           th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].num}"></input>
                                     <td><p th:text="${line.name}"></p></td>
                                     <input type="hidden"
-                                           th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].name}"></input>
+                                           th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].name}"></input>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].iA}"
+                                               th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iA}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].iB}"
+                                               th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iB}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].iC}"
+                                               th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iC}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].iO}"
+                                               th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iO}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><select class="border rounded shadow" style="width: 90px;max-width: 90px;"
-                                                th:field="*{transformators[__${tstat.index}__].listLines[__${lstat.index}__].kA}"
+                                                th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].kA}"
                                                 th:disabled="${rightsMessage != 'Ok'}">
                                         <option th:value=null th:text="--"></option>
                                         <option th:value="'вкл.'" th:text="вкл."></option>
@@ -187,7 +186,6 @@
                                     <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].iC}"/>
                                     <td><p th:text="${transformator.iN}"/></td>
                                     <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].iN}"/>
-                                    <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].linesCount}"/>
                                     <td><input type="datetime-local" class="border rounded shadow"
                                                th:field="*{transformatorsP[__${tstat.index}__].dateTime}"
                                                th:disabled="${rightsMessage != 'Ok'}">
@@ -209,39 +207,39 @@
                                 </tr>
                                 <tr th:each="line, lstat : ${transformator.lines}">
                                     <input type="hidden"
-                                           th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].rn}"></input>
+                                           th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].rn}"></input>
                                     <input type="hidden"
-                                           th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].trRn}"></input>
+                                           th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].trRn}"></input>
                                     <input type="hidden"
-                                           th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].sectionNum}"></input>
+                                           th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].sectionNum}"></input>
                                     <td><p th:text="${line.num}"></p></td>
                                     <input type="hidden"
-                                           th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].num}"></input>
+                                           th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].num}"></input>
                                     <td><p th:text="${line.name}"></p></td>
                                     <input type="hidden"
-                                           th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].name}"></input>
+                                           th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].name}"></input>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].iA}"
+                                               th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iA}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].iB}"
+                                               th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iB}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].iC}"
+                                               th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iC}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
-                                               th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].iO}"
+                                               th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iO}"
                                                th:disabled="${rightsMessage != 'Ok'}"/>
                                     </td>
                                     <td><select class="border rounded shadow" style="width: 90px;max-width: 90px;"
-                                                th:field="*{transformatorsP[__${tstat.index}__].listLines[__${lstat.index}__].kA}"
+                                                th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].kA}"
                                                 th:disabled="${rightsMessage != 'Ok'}">
                                         <option th:value=null th:text="--"></option>
                                         <option th:value="'вкл.'" th:text="вкл."></option>
