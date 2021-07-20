@@ -1,11 +1,11 @@
 package ru.donenergo.journalr.models;
 
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class Transformator {
     private final String baseFormatterPattern = "dd.MM.yy' 'HH:mm";
@@ -30,6 +30,26 @@ public class Transformator {
     private List<Line> lines;
 
     public Transformator() {
+    }
+
+    @Override
+    public String toString() {
+        return "Transformator{" +
+                "rn=" + rn +
+                ", tpRn=" + tpRn +
+                ", num=" + num +
+                ", fider='" + fider + '\'' +
+                ", power=" + power +
+                ", uA=" + uA +
+                ", uB=" + uB +
+                ", uC=" + uC +
+                ", iA=" + iA +
+                ", iB=" + iB +
+                ", iC=" + iC +
+                ", iN=" + iN +
+                ", dateTime=" + dateTime +
+                ", monter='" + monter + '\'' +
+                '}';
     }
 
     public int getRn() {
@@ -132,7 +152,11 @@ public class Transformator {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+        public void setDateTime(String dateTime) {
         if ((dateTime == null) || (dateTime.length() == 0)) {
             this.dateTime = LocalDateTime.now();
         } else {
@@ -193,5 +217,31 @@ public class Transformator {
 
     public void setLines(List<Line> lines) {
         this.lines = lines;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transformator that = (Transformator) o;
+        return rn == that.rn &&
+                tpRn == that.tpRn &&
+                num == that.num &&
+                power == that.power &&
+                uA == that.uA &&
+                uB == that.uB &&
+                uC == that.uC &&
+                iA == that.iA &&
+                iB == that.iB &&
+                iC == that.iC &&
+                iN == that.iN &&
+                Objects.equals(fider, that.fider) &&
+                Objects.equals(dateTime, that.dateTime) &&
+                Objects.equals(monter, that.monter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rn, tpRn, num);
     }
 }

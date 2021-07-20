@@ -15,6 +15,17 @@ public class Podstation extends BasicPodstation{
     public Podstation() {
     }
 
+    @Override
+    public String toString() {
+        return "Podstation{" +
+                "numStr='" + numStr + '\'' +
+                ", resNum=" + resNum +
+                ", dateRn=" + dateRn +
+                ", isActive=" + isActive +
+                ", address='" + address + '\'' +
+                '}';
+    }
+
     public Podstation(int rn, int num, String podstType){
         super(rn, num, podstType);
     }

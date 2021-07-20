@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.donenergo.journalr.services.Activity;
-import ru.donenergo.journalr.services.CommonService;
-import ru.donenergo.journalr.services.HostRestrictionService;
-import ru.donenergo.journalr.services.PodstationService;
+import ru.donenergo.journalr.models.Podstation;
+import ru.donenergo.journalr.services.*;
 
 @Controller
 public class PodstationController implements IPodstationController {
@@ -27,7 +26,7 @@ public class PodstationController implements IPodstationController {
         this.podstationService = podstationService;
     }
 
-    private void wrapData(Model model){
+    private void wrapData(Model model) {
         commonService.setDataToModel(model);
         hostRestrictionService.setDataToModel(model);
         podstationService.setDataToModel(model);
@@ -54,16 +53,21 @@ public class PodstationController implements IPodstationController {
         return "editpodstationparams";
     }
 
-    @GetMapping("/displaypodstation")
-    public String displayPodstation(Model model, @RequestParam(value = "rn") int rn){
-        if (podstationService.getCurrentPodstationRn() != rn) {
-            System.out.println("not equals");
-        }
-        wrapData(model);
-//        commonService.setDataToModel(model);
-//        hostRestrictionService.setDataToModel(model);
-//        podstationService.setDataToModel(model);
-        return commonService.getViewName();
-    }
+    @Override
+    public String editPodstationValues(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
+                                       @RequestParam(value = "action") String action) {
+        if (action.equals("save")) {
+            podstationService.updatePodstationValues(podstation);
+            model.addAttribute("successMessage", IMessageConstants.PODSTATION_SAVED);
+        } else if (action.equals("addP")) {
 
+        } else if (action.startsWith("pTransDel")) {
+
+        } else {
+
+        }
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        wrapData(model);
+        return "redirect:/" + commonService.getViewName();
+    }
 }

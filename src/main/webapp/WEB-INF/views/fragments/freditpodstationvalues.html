@@ -1,5 +1,5 @@
 <div th:fragment="editvalues">
-    <form th:action="@{/editvalues}" th:method="POST" th:object="${currentPodstation}">
+    <form th:action="@{/editpodstationvalues}" th:method="POST" th:object="${currentPodstation}">
         <input type="hidden" th:field="*{podstType}"></input>
         <input type="hidden" th:field="*{numStr}"></input>
         <input type="hidden" th:field="*{address}"></input>
@@ -7,19 +7,19 @@
         <div class="container-fluid">
             <span class="text-center" style="color:green;font-weight:bold" th:if="${successMessage}"><p
                     th:text="${successMessage}"></p></span>
-            <span class="text-center" style="color:red;font-weight:bold" th:unless="${rightsMessage == 'Ok'}"><p
+            <span class="text-center" style="color:red;font-weight:bold" th:unless="${currentPodstation.resNum != hostResNum}"><p
                     th:text="${rightsMessage}"></p></span>
             <h4 class="text-dark mb-4 text-center">
                 <span th:text="${currentPodstation.podstType} + '-' + ${currentPodstation.numStr} + ', ' + ${currentPodstation.address}"></span>
-                <button type="submit" th:name="action" th:value="save" class="btn btn-primary btn-sm shadow"
-                        th:disabled="${rightsMessage != 'Ok'}">
-                    <i class="fa fa-save" style="margin-right: 5px;"></i>
-                    Сохранить
-                </button>
                 <button type="submit" th:name="action" th:value="addP" class="btn btn-success btn-sm shadow"
-                        th:disabled="${rightsMessage != 'Ok'}">
+                        th:disabled="${currentPodstation.resNum != hostResNum}">
                     <i class="fa fa-plus-square" style="margin-right: 5px;"></i>
                     Промежуточный
+                </button>
+                <button type="submit" th:name="action" th:value="save" class="btn btn-primary btn-sm shadow"
+                        th:disabled="${currentPodstation.resNum != hostResNum}">
+                    <i class="fa fa-save" style="margin-right: 5px;"></i>
+                    Сохранить
                 </button>
             </h4>
             <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
@@ -53,13 +53,13 @@
                                     <input type="hidden" th:field="*{transformators[__${tstat.index}__].power}"/>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformators[__${tstat.index}__].uA}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformators[__${tstat.index}__].uB}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformators[__${tstat.index}__].uC}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><p th:text="${transformator.iA}"/></td>
                                     <input type="hidden" th:field="*{transformators[__${tstat.index}__].iA}"/>
                                     <td><p th:text="${transformator.iB}"/></td>
@@ -70,11 +70,11 @@
                                     <input type="hidden" th:field="*{transformators[__${tstat.index}__].iN}"/>
                                     <td><input type="datetime-local" class="border rounded shadow"
                                                th:field="*{transformators[__${tstat.index}__].dateTime}"
-                                               th:disabled="${rightsMessage != 'Ok'}">
+                                               th:disabled="${currentPodstation.resNum != hostResNum}">
                                     </td>
                                     <td><input type="text" class="border rounded shadow"
                                                th:field="*{transformators[__${tstat.index}__].monter}"
-                                               th:disabled="${rightsMessage != 'Ok'}"></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"></td>
                                 </tr>
                             </table>
                             <table class="table table-striped table-bordered table-hover table-sm dataTable my-0">
@@ -103,26 +103,26 @@
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iA}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iB}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iC}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].iO}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><select class="border rounded shadow" style="width: 90px;max-width: 90px;"
                                                 th:field="*{transformators[__${tstat.index}__].lines[__${lstat.index}__].kA}"
-                                                th:disabled="${rightsMessage != 'Ok'}">
+                                                th:disabled="${currentPodstation.resNum != hostResNum}">
                                         <option th:value=null th:text="--"></option>
                                         <option th:value="'вкл.'" th:text="вкл."></option>
                                         <option th:value="'откл.'" th:text="откл."></option>
@@ -137,7 +137,7 @@
                     <span class="text-center" style="color:red;font-weight:bold">Промежуточный замер
                         <button type="submit" th:name="action" th:value="'pTransDel&' + ${transformator.rn}"
                                 title="Удалить" class="btn btn-danger btn-sm shadow"
-                                th:disabled="${rightsMessage != 'Ok'}"
+                                th:disabled="${currentPodstation.resNum != hostResNum}"
                                 th:onclick="return confirm('Удалить замер?');">
                                 <i class="fa fa-trash-alt" style="margin-right: 5px;"></i>
                             Удалить
@@ -171,13 +171,13 @@
                                     <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].power}"/>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformatorsP[__${tstat.index}__].uA}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformatorsP[__${tstat.index}__].uB}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><input class="border rounded shadow" style="width: 60px;max-width: 60px;"
                                                type="number" th:field="*{transformatorsP[__${tstat.index}__].uC}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/></td>
                                     <td><p th:text="${transformator.iA}"/></td>
                                     <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].iA}"/>
                                     <td><p th:text="${transformator.iB}"/></td>
@@ -188,11 +188,11 @@
                                     <input type="hidden" th:field="*{transformatorsP[__${tstat.index}__].iN}"/>
                                     <td><input type="datetime-local" class="border rounded shadow"
                                                th:field="*{transformatorsP[__${tstat.index}__].dateTime}"
-                                               th:disabled="${rightsMessage != 'Ok'}">
+                                               th:disabled="${currentPodstation.resNum != hostResNum}">
                                     </td>
                                     <td><input type="text" class="border rounded shadow"
                                                th:field="*{transformatorsP[__${tstat.index}__].monter}"
-                                               th:disabled="${rightsMessage != 'Ok'}"></td>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"></td>
                                 </tr>
                             </table>
                             <table class="table table-striped table-bordered table-hover table-sm dataTable my-0">
@@ -221,26 +221,26 @@
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iA}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iB}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iC}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><input type="number" class="border rounded shadow"
                                                style="width: 60px;max-width: 60px;"
                                                th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].iO}"
-                                               th:disabled="${rightsMessage != 'Ok'}"/>
+                                               th:disabled="${currentPodstation.resNum != hostResNum}"/>
                                     </td>
                                     <td><select class="border rounded shadow" style="width: 90px;max-width: 90px;"
                                                 th:field="*{transformatorsP[__${tstat.index}__].lines[__${lstat.index}__].kA}"
-                                                th:disabled="${rightsMessage != 'Ok'}">
+                                                th:disabled="${currentPodstation.resNum != hostResNum}">
                                         <option th:value=null th:text="--"></option>
                                         <option th:value="'вкл.'" th:text="вкл."></option>
                                         <option th:value="'откл.'" th:text="откл."></option>

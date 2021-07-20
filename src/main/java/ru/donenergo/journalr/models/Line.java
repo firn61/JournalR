@@ -1,5 +1,7 @@
 package ru.donenergo.journalr.models;
 
+import java.util.Objects;
+
 public class Line {
 
     private int sectionNum;
@@ -14,6 +16,22 @@ public class Line {
     private String kA;
 
     public Line() {
+    }
+
+    @Override
+    public String toString() {
+        return "Line{" +
+                "sectionNum=" + sectionNum +
+                ", rn=" + rn +
+                ", trRn=" + trRn +
+                ", num=" + num +
+                ", name='" + name + '\'' +
+                ", iA=" + iA +
+                ", iB=" + iB +
+                ", iC=" + iC +
+                ", iO=" + iO +
+                ", kA='" + kA + '\'' +
+                '}';
     }
 
     public int getSectionNum() {
@@ -94,5 +112,27 @@ public class Line {
 
     public void setkA(String kA) {
         this.kA = kA;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Line line = (Line) o;
+        return sectionNum == line.sectionNum &&
+                rn == line.rn &&
+                trRn == line.trRn &&
+                num == line.num &&
+                iA == line.iA &&
+                iB == line.iB &&
+                iC == line.iC &&
+                iO == line.iO &&
+                Objects.equals(name, line.name) &&
+                Objects.equals(kA, line.kA);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sectionNum, rn, trRn, num);
     }
 }
