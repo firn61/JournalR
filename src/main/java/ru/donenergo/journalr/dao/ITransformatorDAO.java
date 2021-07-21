@@ -15,6 +15,8 @@ public interface ITransformatorDAO {
 
     Integer addTransformator(Transformator transformator, String additionalPostfix);
 
+    Integer addIntermediateTransformator(Transformator transformator);
+
     Integer addTransformatorToNewPeriod(Transformator transformator);
 
     void updateTransformatorValues(Transformator transformator, String additionalPostfix);
@@ -22,6 +24,8 @@ public interface ITransformatorDAO {
     void updateTransformatorParams(Transformator transformator);
 
     void deleteTransformator(Transformator transformator, String additionalPostfix);
+
+    void deleteTransformator(int rn, String additionalPostfix);
 
     boolean isTransformatorPExist(int rn);
 

@@ -15,6 +15,8 @@ public interface ILineDAO {
 
     Integer addLine(Line line, String additionalPostfix);
 
+    Integer addIntermediateLine(Line line, int trRn);
+
     Integer addLineToNewPeriod(Line line);
 
     void updateLineValues(Line line, String additionalPostfix);

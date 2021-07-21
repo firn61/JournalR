@@ -44,6 +44,10 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         this.lineDAO = lineDAO;
     }
 
+    public void refreshCurrentPodstation() {
+        currentPodstation = getPodstation(currentPodstation.getRn());
+    }
+
     @Override
     public Podstation getPodstation(int rn) {
         Podstation podstation = podstationDAO.getPodstation(rn);
@@ -57,8 +61,8 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         if (transformatorDAO.isTransformatorPExist(podstation.getRn())) {
             podstation.setTransformatorsP(transformatorDAO.getTransformators(podstation.getRn(), INTERMEDIATE));
             for (int i = 0; i < podstation.getTransformatorsP().size(); i++) {
-                logger.info("transformatorP {}", podstation.getTransformators().get(i));
-                int transformatorRn = podstation.getTransformators().get(i).getRn();
+                logger.info("transformatorP {}", podstation.getTransformatorsP().get(i));
+                int transformatorRn = podstation.getTransformatorsP().get(i).getRn();
                 podstation.getTransformatorsP().get(i).setLines(lineDAO.getLines(transformatorRn, INTERMEDIATE));
             }
         }
@@ -110,44 +114,170 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         }
     }
 
-    public void updatePodstationValues(Podstation savingPodstation) {
-        if (savingPodstation.getTransformators().size() > 0) {
+    public boolean updatePodstationValues(Podstation savingPodstation) {
+        boolean updated = false;
+        boolean updatedP = false;
+        if ((savingPodstation.getTransformators() != null) && (savingPodstation.getTransformators().size() > 0)) {
             for (int savingTransNum = 0; savingTransNum < savingPodstation.getTransformators().size(); savingTransNum++) {
-                updateTransformatorValues(savingPodstation.getTransformators().get(savingTransNum), savingTransNum, NORMAL);
+                logger.info("processing trans {} ", savingPodstation.getTransformators().get(savingTransNum));
+                updated = updated | updateTransformatorValues(savingPodstation.getTransformators().get(savingTransNum), savingTransNum, NORMAL);
             }
         }
-        if (savingPodstation.getTransformatorsP().size() > 0) {
-            for (int savingTransNum = 0; savingTransNum < savingPodstation.getTransformatorsP().size(); savingTransNum++) {
-                updateTransformatorValues(savingPodstation.getTransformatorsP().get(savingTransNum), savingTransNum, INTERMEDIATE);
+        if ((savingPodstation.getTransformatorsP() != null) && (savingPodstation.getTransformatorsP().size() > 0)) {
+            for (int savingTransPNum = 0; savingTransPNum < savingPodstation.getTransformatorsP().size(); savingTransPNum++) {
+                logger.info("processing transP {} ", savingPodstation.getTransformatorsP().get(savingTransPNum));
+                updatedP = updatedP | updateTransformatorValues(savingPodstation.getTransformatorsP().get(savingTransPNum), savingTransPNum, INTERMEDIATE);
             }
         }
+        boolean podstationUpdated = updated | updatedP;
+        if (podstationUpdated) {
+            currentPodstation = savingPodstation;
+        }
+        logger.info("podstation changed {}", podstationUpdated);
+        return podstationUpdated;
     }
 
-    public void updateTransformatorValues(Transformator savingTransformator, int transNum, String additionalPostfix) {
+    public boolean updateTransformatorValues(Transformator savingTransformator, int transNum, String additionalPostfix) {
+        boolean updated = false;
         int sumiA, sumiB, sumiC, sumiO;
         sumiA = sumiB = sumiC = sumiO = 0;
         for (int savingLineNum = 0; savingLineNum < savingTransformator.getLines().size(); savingLineNum++) {
             Line savingLine = savingTransformator.getLines().get(savingLineNum);
+            logger.info("processing {}", savingLine);
             sumiA += savingLine.getiA();
             sumiB += savingLine.getiB();
             sumiC += savingLine.getiC();
             sumiO += savingLine.getiO();
             if (!savingLine.equals(currentPodstation.getTransformators().get(transNum).getLines().get(savingLineNum))) {
+                logger.info("updating {}", savingLine);
                 lineDAO.updateLineValues(savingLine, additionalPostfix);
+                logger.info("updated {}", savingLine);
+                updated = true;
             }
         }
+        logger.info("sumA {} sumB {} sumC {} sumO {}", sumiA, sumiB, sumiC, sumiO);
         savingTransformator.setiA(sumiA);
-        savingTransformator.setiA(sumiB);
+        savingTransformator.setiB(sumiB);
         savingTransformator.setiC(sumiC);
         savingTransformator.setiN(sumiO);
+        logger.info("saving trans {}", savingTransformator);
+        logger.info("currentTrans {}", currentPodstation.getTransformators().get(transNum));
+        logger.info("eqals trans is {}", savingTransformator.equals(currentPodstation.getTransformators().get(transNum)));
         if (!savingTransformator.equals(currentPodstation.getTransformators().get(transNum))) {
+            logger.info("updating {}", savingTransformator);
             transformatorDAO.updateTransformatorValues(savingTransformator, additionalPostfix);
+            logger.info("updated {}", savingTransformator);
+            updated = true;
         }
-
+        return updated;
     }
 
-    public void updateLineValues(Line savingLine, String additionalPostfix) {
+    public void createIntermediateMeasure(Podstation podstation) {
+        for (Transformator transformator : podstation.getTransformators()) {
+            logger.info("transformatorP {}", transformator);
+            int transformatorPRn = transformatorDAO.addIntermediateTransformator(transformator);
+            for (Line line : transformator.getLines()) {
+                logger.info("lineP", line);
+                lineDAO.addIntermediateLine(line, transformatorPRn);
+            }
+        }
+        refreshCurrentPodstation();
+    }
 
+    public void deleteIntermediateTransformator(int rn) {
+        Transformator transformator = new Transformator();
+        transformator.setRn(rn);
+        transformatorDAO.deleteTransformator(transformator, INTERMEDIATE);
+        lineDAO.deleteLines(transformator, INTERMEDIATE);
+        refreshCurrentPodstation();
+    }
+
+    public void addTransformator(Podstation podstation) {
+        Transformator transformator = new Transformator();
+        transformator.setTpRn(podstation.getRn());
+        transformator.setNum(podstation.getTransformators().size() + 1);
+        transformatorDAO.addTransformator(transformator, NORMAL);
+        refreshCurrentPodstation();
+    }
+
+    public void deleteTransformator(int rn) {
+        transformatorDAO.deleteTransformator(rn, NORMAL);
+        refreshCurrentPodstation();
+    }
+
+    public void addLine(int transformatorRn) {
+        int linesCount = 0;
+        for (Transformator transformator : currentPodstation.getTransformators()) {
+            if (transformator.getRn() == transformatorRn) {
+                linesCount = transformator.getLines().size();
+                break;
+            }
+        }
+        Line line = new Line();
+        line.setNum(linesCount + 1);
+        line.setTrRn(transformatorRn);
+        lineDAO.addLine(line, NORMAL);
+        refreshCurrentPodstation();
+    }
+
+    public void moveLine(int rn, String direction) {
+        int shift = 0;
+        if (direction.equals("up")) {
+            shift = -1;
+        } else if (direction.equals("down")) {
+            shift = 1;
+        }
+        Line currentLine = lineDAO.getLine(rn, NORMAL);
+        Line swappedLine;
+        try {
+            swappedLine = lineDAO.getLine(currentLine.getTrRn(), currentLine.getNum() + shift, NORMAL);
+        } catch (EmptyResultDataAccessException e) {
+            swappedLine = null;
+        }
+        if (swappedLine != null) {
+            int currentLineNum = currentLine.getNum();
+            int swappedLineNum = swappedLine.getNum();
+            currentLine.setNum(swappedLineNum);
+            swappedLine.setNum(currentLineNum);
+            lineDAO.updateLineParams(currentLine);
+            lineDAO.updateLineParams(swappedLine);
+            refreshCurrentPodstation();
+        }
+    }
+
+    public void deleteLine(int rn) {
+        Line line = new Line();
+        line.setRn(rn);
+        lineDAO.deleteLine(line, NORMAL);
+        refreshCurrentPodstation();
+    }
+
+    public boolean updatePodstationParams(Podstation savingPodstation) {
+        boolean updated = false;
+        if (!savingPodstation.equals(currentPodstation)) {
+            podstationDAO.updatePodstationParams(savingPodstation);
+            updated = true;
+        }
+        for (int savingTransNum = 0; savingTransNum < savingPodstation.getTransformators().size(); savingTransNum++) {
+            Transformator savingTransformator = savingPodstation.getTransformators().get(savingTransNum);
+            Transformator currentTransformator = currentPodstation.getTransformators().get(savingTransNum);
+            if (!savingTransformator.equals(currentTransformator)) {
+                transformatorDAO.updateTransformatorParams(savingTransformator);
+                updated = true;
+            }
+            for (int savingLineNum = 0; savingLineNum < savingPodstation.getTransformators().get(savingTransNum).getLines().size(); savingLineNum++) {
+                Line savingLine = savingPodstation.getTransformators().get(savingTransNum).getLines().get(savingLineNum);
+                Line currentLine = currentPodstation.getTransformators().get(savingTransNum).getLines().get(savingLineNum);
+                if (!savingLine.equals(currentLine)) {
+                    lineDAO.updateLineParams(savingLine);
+                    updated = true;
+                }
+            }
+        }
+        if (updated) {
+            refreshCurrentPodstation();
+        }
+        return updated;
     }
 
 }

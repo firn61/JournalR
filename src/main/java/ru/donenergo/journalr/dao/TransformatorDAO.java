@@ -43,6 +43,12 @@ public class TransformatorDAO implements ITransformatorDAO{
     }
 
     @Override
+    public Integer addIntermediateTransformator(Transformator transformator){
+        String queryTemplate = "execute procedure TRANS_INSERT_P(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, null, null)";
+        return jdbcTemplate.queryForObject(queryTemplate, new Object[]{transformator.getTpRn(), transformator.getNum(), transformator.getFider(), transformator.getPower()}, Integer.class);
+    }
+
+    @Override
     public Integer addTransformatorToNewPeriod(Transformator transformator) {
         String queryTemplate = "execute procedure TRANS_INSERT(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, null, null)";
         return jdbcTemplate.queryForObject(queryTemplate, new Object[]{transformator.getTpRn(), transformator.getNum(),
@@ -67,6 +73,13 @@ public class TransformatorDAO implements ITransformatorDAO{
     public void deleteTransformator(Transformator transformator, String additionalPostfix) {
         String queryTemplate = "DELETE FROM TRANSFORMATOR" + additionalPostfix + " WHERE RN = ?";
         jdbcTemplate.update(queryTemplate, new Object[]{transformator.getRn()});
+    }
+
+    @Override
+    public void deleteTransformator(int rn, String additionalPostfix) {
+        Transformator transformator = new Transformator();
+        transformator.setRn(rn);
+        deleteTransformator(transformator, additionalPostfix);
     }
 
     @Override

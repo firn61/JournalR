@@ -44,6 +44,12 @@ public class LineDAO implements ILineDAO{
     }
 
     @Override
+    public Integer addIntermediateLine(Line line, int trRn){
+        String queryTemplate ="execute procedure LINE_INSERT_P(?, ?, ?, 0, 0, 0, 0, null)";
+        return jdbcTemplate.queryForObject(queryTemplate, new Object[]{trRn, line.getNum(), line.getName()}, Integer.class);
+    }
+
+    @Override
     public Integer addLineToNewPeriod(Line line) {
         String queryTemplate = "execute procedure LINE_INSERT(?, ?, ?, 0, 0, 0, 0, null)";
         return jdbcTemplate.queryForObject(queryTemplate, new Object[]{line.getTrRn(), line.getNum(), line.getNum()}, Integer.class);

@@ -11,11 +11,15 @@ public interface IPodstationController {
     String showPodstation(Model model, int rn);
 
     @GetMapping("/editpodstationvalues")
-    String editPodstationValues(Model model, int rn);
-
-    @GetMapping("/editpodstationparams")
-    String editPodstationParams(Model model, int rn);
+    String editPodstationValues(Model model, String message, int rn);
 
     @PostMapping("/editpodstationvalues")
     String editPodstationValues(Model model, Podstation podstation, String action);
+
+    @GetMapping("/editpodstationparams")
+    String editPodstationParams(Model model, String message, int rn);
+
+    @PostMapping("/editpodstationparams")
+    String editPodstationParams(Model model, Podstation podstation, String action);
+
 }

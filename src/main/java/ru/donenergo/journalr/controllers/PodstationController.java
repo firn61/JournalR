@@ -39,35 +39,90 @@ public class PodstationController implements IPodstationController {
         return "showpodstation";
     }
 
+
+    //GET method
     @Override
-    public String editPodstationValues(Model model, @RequestParam(value = "rn") int rn) {
+    public String editPodstationValues(Model model, @RequestParam(value = "message", required = false) String message,
+                                       @RequestParam(value = "rn") int rn) {
         podstationService.podstationRnCheck(rn);
+        if (message != null) {
+            if (message.equals("saved")) {
+                model.addAttribute("message", IMessageConstants.PODSTATION_SAVED);
+            }
+            if (message.equals("notsaved")) {
+                model.addAttribute("message", IMessageConstants.PODSTATION_NOTNING_TO_SAVE);
+            }
+        }
         wrapData(model);
         return "editpodstationvalues";
     }
 
+    //POST method
     @Override
-    public String editPodstationParams(Model model, @RequestParam(value = "rn") int rn) {
+    public String editPodstationValues(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
+                                       @RequestParam(value = "action") String action) {
+        if (action.equals("save")) {
+            String message;
+            if (podstationService.updatePodstationValues(podstation)) {
+                message = "saved";
+            } else {
+                message = "notsaved";
+            }
+            model.addAttribute("message", message);
+        } else if (action.equals("addP")) {
+            podstationService.createIntermediateMeasure(podstation);
+        } else if (action.startsWith("pTransDel")) {
+            Integer pTransformatorRn = Integer.valueOf(action.split("&")[1]);
+            podstationService.deleteIntermediateTransformator(pTransformatorRn);
+        } else {
+
+        }
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        return "redirect:/editpodstationvalues";
+    }
+
+    //GET method
+    @Override
+    public String editPodstationParams(Model model, @RequestParam(value = "message", required = false) String message,
+                                       @RequestParam(value = "rn") int rn) {
         podstationService.podstationRnCheck(rn);
         wrapData(model);
         return "editpodstationparams";
     }
 
+    //POST method
     @Override
-    public String editPodstationValues(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
+    public String editPodstationParams(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
                                        @RequestParam(value = "action") String action) {
         if (action.equals("save")) {
-            podstationService.updatePodstationValues(podstation);
-            model.addAttribute("successMessage", IMessageConstants.PODSTATION_SAVED);
-        } else if (action.equals("addP")) {
-
-        } else if (action.startsWith("pTransDel")) {
+            podstationService.updatePodstationParams(podstation);
+        } else if (action.equals("streetsedit")) {
 
         } else {
-
+            String target = action.split("&")[0];
+            String operation = action.split("&")[1];
+            int rn = Integer.valueOf(action.split("&")[2]);
+            if (target.equals("trans")) {
+                if (operation.equals("add")) {
+                    podstationService.addTransformator(podstation);
+                } else if (operation.equals("del")) {
+                    podstationService.deleteTransformator(rn);
+                }
+            } else if (target.equals("line")) {
+                if (operation.equals("add")) {
+                    podstationService.addLine(rn);
+                } else if (operation.equals("up")) {
+                    podstationService.moveLine(rn, "up");
+                } else if (operation.equals("down")) {
+                    podstationService.moveLine(rn, "down");
+                } else if (operation.equals("del")) {
+                    podstationService.deleteLine(rn);
+                }
+            }
         }
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        wrapData(model);
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/editpodstationparams";
     }
+
+
 }

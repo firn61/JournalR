@@ -1,6 +1,7 @@
 package ru.donenergo.journalr.models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Podstation extends BasicPodstation{
 
@@ -84,5 +85,22 @@ public class Podstation extends BasicPodstation{
 
     public void setTransformatorsP(List<Transformator> transformatorsP) {
         this.transformatorsP = transformatorsP;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Podstation that = (Podstation) o;
+        return resNum == that.resNum &&
+                dateRn == that.dateRn &&
+                isActive == that.isActive &&
+                Objects.equals(numStr, that.numStr) &&
+                Objects.equals(address, that.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numStr, resNum, dateRn, isActive, address);
     }
 }
