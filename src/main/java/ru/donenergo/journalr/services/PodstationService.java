@@ -9,7 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
-import ru.donenergo.journalr.controllers.CommonController;
 import ru.donenergo.journalr.dao.ILineDAO;
 import ru.donenergo.journalr.dao.IPodstationDAO;
 import ru.donenergo.journalr.dao.ITransformatorDAO;
@@ -21,7 +20,7 @@ import javax.annotation.PostConstruct;
 
 @Service
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class PodstationService implements IPodstationService, IDataToModelSetter {
+public class PodstationService implements IPodstationActions, ITransformatorActions, ILineActions, IIntermediateActions, IDataToModelSetter {
 
     private final String NORMAL = "";
     private final String INTERMEDIATE = "_P";
@@ -99,6 +98,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
 
     }
 
+    @Override
     public void getPodstationByNumAndType(int num, String podstType, int period) {
         try {
             Integer podstationRn = podstationDAO.getPodstationRn(num, podstType, period);
@@ -108,12 +108,14 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         }
     }
 
+    @Override
     public void podstationRnCheck(int rn) {
         if (currentPodstation.getRn() != rn) {
             System.out.println("NE");
         }
     }
 
+    @Override
     public boolean updatePodstationValues(Podstation savingPodstation) {
         boolean updated = false;
         boolean updatedP = false;
@@ -137,6 +139,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         return podstationUpdated;
     }
 
+    @Override
     public boolean updateTransformatorValues(Transformator savingTransformator, int transNum, String additionalPostfix) {
         boolean updated = false;
         int sumiA, sumiB, sumiC, sumiO;
@@ -149,7 +152,6 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
             sumiC += savingLine.getiC();
             sumiO += savingLine.getiO();
             if (!savingLine.equals(currentPodstation.getTransformators().get(transNum).getLines().get(savingLineNum))) {
-                logger.info("updating {}", savingLine);
                 lineDAO.updateLineValues(savingLine, additionalPostfix);
                 logger.info("updated {}", savingLine);
                 updated = true;
@@ -162,7 +164,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         savingTransformator.setiN(sumiO);
         logger.info("saving trans {}", savingTransformator);
         logger.info("currentTrans {}", currentPodstation.getTransformators().get(transNum));
-        logger.info("eqals trans is {}", savingTransformator.equals(currentPodstation.getTransformators().get(transNum)));
+        logger.info("equals trans is {}", savingTransformator.equals(currentPodstation.getTransformators().get(transNum)));
         if (!savingTransformator.equals(currentPodstation.getTransformators().get(transNum))) {
             logger.info("updating {}", savingTransformator);
             transformatorDAO.updateTransformatorValues(savingTransformator, additionalPostfix);
@@ -172,6 +174,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         return updated;
     }
 
+    @Override
     public void createIntermediateMeasure(Podstation podstation) {
         for (Transformator transformator : podstation.getTransformators()) {
             logger.info("transformatorP {}", transformator);
@@ -184,6 +187,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         refreshCurrentPodstation();
     }
 
+    @Override
     public void deleteIntermediateTransformator(int rn) {
         Transformator transformator = new Transformator();
         transformator.setRn(rn);
@@ -192,6 +196,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         refreshCurrentPodstation();
     }
 
+    @Override
     public void addTransformator(Podstation podstation) {
         Transformator transformator = new Transformator();
         transformator.setTpRn(podstation.getRn());
@@ -200,11 +205,13 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         refreshCurrentPodstation();
     }
 
+    @Override
     public void deleteTransformator(int rn) {
         transformatorDAO.deleteTransformator(rn, NORMAL);
         refreshCurrentPodstation();
     }
 
+    @Override
     public void addLine(int transformatorRn) {
         int linesCount = 0;
         for (Transformator transformator : currentPodstation.getTransformators()) {
@@ -220,6 +227,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         refreshCurrentPodstation();
     }
 
+    @Override
     public void moveLine(int rn, String direction) {
         int shift = 0;
         if (direction.equals("up")) {
@@ -245,6 +253,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         }
     }
 
+    @Override
     public void deleteLine(int rn) {
         Line line = new Line();
         line.setRn(rn);
@@ -252,6 +261,7 @@ public class PodstationService implements IPodstationService, IDataToModelSetter
         refreshCurrentPodstation();
     }
 
+    @Override
     public boolean updatePodstationParams(Podstation savingPodstation) {
         boolean updated = false;
         if (!savingPodstation.equals(currentPodstation)) {
