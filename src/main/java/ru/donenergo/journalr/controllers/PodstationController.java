@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.services.*;
 
@@ -120,6 +121,17 @@ public class PodstationController implements IPodstationController {
                 }
             }
         }
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+        return "redirect:/editpodstationparams";
+    }
+
+    @GetMapping("/addpodstation")
+    public String savePodstation(Model model, @RequestParam(value="podstType") String podstType,
+                                 @RequestParam(value = "num") int num,
+                                 @RequestParam(value = "address") String address){
+        BasicPodstation basicPodstation = podstationService.addPodstation(podstType, num, address,
+                commonService.getCurrentPeriod(), hostRestrictionService.getHostResNum());
+        commonService.addBasicPodstatinLabel(basicPodstation);
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
         return "redirect:/editpodstationparams";
     }

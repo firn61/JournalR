@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
 import ru.donenergo.journalr.dao.ILineDAO;
 import ru.donenergo.journalr.dao.IPodstationDAO;
 import ru.donenergo.journalr.dao.ITransformatorDAO;
+import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Line;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.models.Transformator;
@@ -200,7 +202,13 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
     public void addTransformator(Podstation podstation) {
         Transformator transformator = new Transformator();
         transformator.setTpRn(podstation.getRn());
-        transformator.setNum(podstation.getTransformators().size() + 1);
+        int transNum;
+        if (podstation.getTransformators() == null) {
+            transNum = 1;
+        } else {
+            transNum = podstation.getTransformators().size() + 1;
+        }
+        transformator.setNum(transNum);
         transformatorDAO.addTransformator(transformator, NORMAL);
         refreshCurrentPodstation();
     }
@@ -289,5 +297,22 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         }
         return updated;
     }
+
+    public BasicPodstation addPodstation(String podstType, int num, String address, int dateRn, int resNum) {
+        Podstation podstation = new Podstation();
+        podstation.setPodstType(podstType);
+        podstation.setNum(num);
+        podstation.setNumStr(String.valueOf(num));
+        podstation.setAddress(address);
+        podstation.setDateRn(dateRn);
+        podstation.setResNum(resNum);
+        if (podstationDAO.podstationCount(podstation) == 0) {
+            podstation.setRn(podstationDAO.addPodstation(podstation));
+            currentPodstation = podstation;
+        }
+        return podstation.convertToBasic();
+
+    }
+
 
 }

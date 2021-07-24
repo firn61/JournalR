@@ -103,4 +103,12 @@ public class Podstation extends BasicPodstation{
     public int hashCode() {
         return Objects.hash(numStr, resNum, dateRn, isActive, address);
     }
+
+    public BasicPodstation convertToBasic(){
+        BasicPodstation basicPodstation = new BasicPodstation();
+        basicPodstation.setRn(this.rn);
+        basicPodstation.setNum(this.num);
+        basicPodstation.setPodstType(this.podstType);
+        return basicPodstation;
+    }
 }

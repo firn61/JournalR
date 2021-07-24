@@ -76,6 +76,10 @@ public class CommonService implements ICommonService, IDataToModelSetter {
         }
     }
 
+    public void addBasicPodstatinLabel(BasicPodstation newBasicPodstation){
+        basicPodstationLabels.add(newBasicPodstation);
+    }
+
     public void changeViewIfIndex(){
         if (activity.equals(Activity.INDEX)) {
             activity = Activity.SHOW_PODSTATION;
