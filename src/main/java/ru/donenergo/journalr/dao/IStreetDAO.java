@@ -13,16 +13,4 @@ public interface IStreetDAO {
 
     List<Street> getStreets();
 
-    List<HouseSegment> getHouseSegment(Podstation podstation, String houseSegmentNum);
-
-    List<HouseSegment> getHouseSegment(Transformator transformator, String houseSegmentNum);
-
-    List<HouseSegment> getHouseSegment(Street street);
-
-    List<HouseSegment> getHouseSegment(Street street, int houseNum);
-
-    void addHouseSegment(HouseSegment houseSegment);
-
-    void deleteHouseSegment(HouseSegment houseSegment);
-
 }
