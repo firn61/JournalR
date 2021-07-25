@@ -1,0 +1,10 @@
+<div th:fragment="index" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="container-fluid">
+            <span class="text-center" style="color:green;font-weight:bold" th:each="msg: ${messages}">
+                <p th:text="${msg}"></p>
+            </span>
+        <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
+    </div>
+</div>

@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ru.donenergo.journalr.dao.ILineDAO;
 import ru.donenergo.journalr.dao.IPodstationDAO;
 import ru.donenergo.journalr.dao.ITransformatorDAO;
+import ru.donenergo.journalr.exceptions.PodstationAlreadyExistException;
 import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Line;
 import ru.donenergo.journalr.models.Podstation;
@@ -30,7 +31,6 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
     private final ITransformatorDAO transformatorDAO;
     private final ILineDAO lineDAO;
     private Podstation currentPodstation;
-    private String errorMessage = "";
     static final Logger logger = LoggerFactory.getLogger(PodstationService.class);
 
     @PostConstruct
@@ -83,42 +83,42 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
 
     @Override
     public void setDataToModel(Model model) {
-        model.addAttribute("errorMessage", errorMessage);
-        errorMessage = "";
         model.addAttribute("currentPodstation", currentPodstation);
 
     }
 
     @Override
-    public void getCurrentPodstationFromNewPeriod(int period) {
+    public String getCurrentPodstationFromNewPeriod(int period) {
         try {
             Integer podstationRn = podstationDAO.getPodstationRn(currentPodstation.getNum(), currentPodstation.getPodstType(), period);
             currentPodstation = getPodstation(podstationRn);
+            return "ok";
         } catch (EmptyResultDataAccessException e) {
-            errorMessage = "Подстанция " + currentPodstation.getPodstType() + "-" + currentPodstation.getNum() + " не найдена в выбраном периоде";
+            return "Подстанция " + currentPodstation.getPodstType() + "-" + currentPodstation.getNum() + " не найдена в выбраном периоде";
         }
 
     }
 
     @Override
-    public void getPodstationByNumAndType(int num, String podstType, int period) {
+    public String getPodstationByNumAndType(int num, String podstType, int period) {
         try {
             Integer podstationRn = podstationDAO.getPodstationRn(num, podstType, period);
             currentPodstation = getPodstation(podstationRn);
+            return "ok";
         } catch (EmptyResultDataAccessException e) {
-            errorMessage = "Подстанция " + podstType + "-" + num + " не найдена";
+            return "Подстанция " + podstType + "-" + num + " не найдена";
         }
     }
 
     @Override
     public void podstationRnCheck(int rn) {
         if (currentPodstation.getRn() != rn) {
-            System.out.println("NE");
+            logger.warn("podstation rn {} incorrect");
         }
     }
 
     @Override
-    public boolean updatePodstationValues(Podstation savingPodstation) {
+    public String updatePodstationValues(Podstation savingPodstation) {
         boolean updated = false;
         boolean updatedP = false;
         if ((savingPodstation.getTransformators() != null) && (savingPodstation.getTransformators().size() > 0)) {
@@ -128,7 +128,9 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             }
         }
         if ((savingPodstation.getTransformatorsP() != null) && (savingPodstation.getTransformatorsP().size() > 0)) {
+            logger.info("saving transP count {}", savingPodstation.getTransformatorsP().size());
             for (int savingTransPNum = 0; savingTransPNum < savingPodstation.getTransformatorsP().size(); savingTransPNum++) {
+                logger.info("saving transP num {}", savingTransPNum);
                 logger.info("processing transP {} ", savingPodstation.getTransformatorsP().get(savingTransPNum));
                 updatedP = updatedP | updateTransformatorValues(savingPodstation.getTransformatorsP().get(savingTransPNum), savingTransPNum, INTERMEDIATE);
             }
@@ -138,7 +140,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             currentPodstation = savingPodstation;
         }
         logger.info("podstation changed {}", podstationUpdated);
-        return podstationUpdated;
+        return podstationUpdated ? IMessageConstants.PODSTATION_SAVED : IMessageConstants.PODSTATION_NOTNING_TO_SAVE;
     }
 
     @Override
@@ -147,13 +149,25 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         int sumiA, sumiB, sumiC, sumiO;
         sumiA = sumiB = sumiC = sumiO = 0;
         for (int savingLineNum = 0; savingLineNum < savingTransformator.getLines().size(); savingLineNum++) {
+            logger.info("saving line num {}", savingLineNum);
             Line savingLine = savingTransformator.getLines().get(savingLineNum);
             logger.info("processing {}", savingLine);
             sumiA += savingLine.getiA();
             sumiB += savingLine.getiB();
             sumiC += savingLine.getiC();
             sumiO += savingLine.getiO();
-            if (!savingLine.equals(currentPodstation.getTransformators().get(transNum).getLines().get(savingLineNum))) {
+            Line currentLine = new Line();
+            if (additionalPostfix.equals(NORMAL)) {
+                currentLine = currentPodstation.getTransformators().get(transNum).getLines().get(savingLineNum);
+            } else {
+                for (int transPNum = 0; transPNum < currentPodstation.getTransformatorsP().size(); transPNum++) {
+                    if (currentPodstation.getTransformatorsP().get(transPNum).getRn() == savingTransformator.getRn()) {
+                        currentLine = currentPodstation.getTransformatorsP().get(transPNum).getLines().get(savingLineNum);
+                        break;
+                    }
+                }
+            }
+            if (!savingLine.equals(currentLine)) {
                 lineDAO.updateLineValues(savingLine, additionalPostfix);
                 logger.info("updated {}", savingLine);
                 updated = true;
@@ -165,10 +179,18 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         savingTransformator.setiC(sumiC);
         savingTransformator.setiN(sumiO);
         logger.info("saving trans {}", savingTransformator);
-        logger.info("currentTrans {}", currentPodstation.getTransformators().get(transNum));
-        logger.info("equals trans is {}", savingTransformator.equals(currentPodstation.getTransformators().get(transNum)));
-        if (!savingTransformator.equals(currentPodstation.getTransformators().get(transNum))) {
-            logger.info("updating {}", savingTransformator);
+        Transformator currentTransformator = new Transformator();
+        if (additionalPostfix.equals(NORMAL)) {
+            currentTransformator = currentPodstation.getTransformators().get(transNum);
+        } else {
+            for (int transPNum = 0; transPNum < currentPodstation.getTransformatorsP().size(); transPNum++) {
+                if (currentPodstation.getTransformatorsP().get(transPNum).getRn() == savingTransformator.getRn()){
+                    currentTransformator = currentPodstation.getTransformatorsP().get(transPNum);
+                    logger.info("saving trans from intermediate {}", currentTransformator);
+                }
+            }
+        }
+        if (!savingTransformator.equals(currentTransformator)) {
             transformatorDAO.updateTransformatorValues(savingTransformator, additionalPostfix);
             logger.info("updated {}", savingTransformator);
             updated = true;
@@ -177,7 +199,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
     }
 
     @Override
-    public void createIntermediateMeasure(Podstation podstation) {
+    public String createIntermediateMeasure(Podstation podstation) {
         for (Transformator transformator : podstation.getTransformators()) {
             logger.info("transformatorP {}", transformator);
             int transformatorPRn = transformatorDAO.addIntermediateTransformator(transformator);
@@ -187,19 +209,21 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             }
         }
         refreshCurrentPodstation();
+        return IMessageConstants.INTERMEDIATE_ADD;
     }
 
     @Override
-    public void deleteIntermediateTransformator(int rn) {
+    public String deleteIntermediateTransformator(int rn) {
         Transformator transformator = new Transformator();
         transformator.setRn(rn);
         transformatorDAO.deleteTransformator(transformator, INTERMEDIATE);
         lineDAO.deleteLines(transformator, INTERMEDIATE);
         refreshCurrentPodstation();
+        return IMessageConstants.INTERMEDIATE_DEL;
     }
 
     @Override
-    public void addTransformator(Podstation podstation) {
+    public String addTransformator(Podstation podstation) {
         Transformator transformator = new Transformator();
         transformator.setTpRn(podstation.getRn());
         int transNum;
@@ -211,16 +235,18 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         transformator.setNum(transNum);
         transformatorDAO.addTransformator(transformator, NORMAL);
         refreshCurrentPodstation();
+        return IMessageConstants.TRANSFORMATOR_ADD;
     }
 
     @Override
-    public void deleteTransformator(int rn) {
+    public String deleteTransformator(int rn) {
         transformatorDAO.deleteTransformator(rn, NORMAL);
         refreshCurrentPodstation();
+        return IMessageConstants.TRANSFORMATOR_DEL;
     }
 
     @Override
-    public void addLine(int transformatorRn) {
+    public String addLine(int transformatorRn) {
         int linesCount = 0;
         for (Transformator transformator : currentPodstation.getTransformators()) {
             if (transformator.getRn() == transformatorRn) {
@@ -233,15 +259,19 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         line.setTrRn(transformatorRn);
         lineDAO.addLine(line, NORMAL);
         refreshCurrentPodstation();
+        return IMessageConstants.LINE_ADD;
     }
 
     @Override
-    public void moveLine(int rn, String direction) {
+    public String moveLine(int rn, String direction) {
         int shift = 0;
+        String cyrDirection = "";
         if (direction.equals("up")) {
             shift = -1;
+            cyrDirection = IMessageConstants.LINE_MOVED_UP;
         } else if (direction.equals("down")) {
             shift = 1;
+            cyrDirection = IMessageConstants.LINE_MOVED_DOWN;
         }
         Line currentLine = lineDAO.getLine(rn, NORMAL);
         Line swappedLine;
@@ -258,22 +288,28 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             lineDAO.updateLineParams(currentLine);
             lineDAO.updateLineParams(swappedLine);
             refreshCurrentPodstation();
+            return cyrDirection;
+        } else {
+            return IMessageConstants.LINE_CANNOT_MOVED;
         }
     }
 
     @Override
-    public void deleteLine(int rn) {
+    public String deleteLine(int rn) {
         Line line = new Line();
         line.setRn(rn);
         lineDAO.deleteLine(line, NORMAL);
         refreshCurrentPodstation();
+        return IMessageConstants.LINE_DEL;
     }
 
     @Override
-    public boolean updatePodstationParams(Podstation savingPodstation) {
+    public String updatePodstationParams(Podstation savingPodstation) {
         boolean updated = false;
         if (!savingPodstation.equals(currentPodstation)) {
             podstationDAO.updatePodstationParams(savingPodstation);
+            logger.info("updating podstation {}", savingPodstation);
+            logger.info("saving podstation {}", currentPodstation);
             updated = true;
         }
         for (int savingTransNum = 0; savingTransNum < savingPodstation.getTransformators().size(); savingTransNum++) {
@@ -281,6 +317,8 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             Transformator currentTransformator = currentPodstation.getTransformators().get(savingTransNum);
             if (!savingTransformator.equals(currentTransformator)) {
                 transformatorDAO.updateTransformatorParams(savingTransformator);
+                logger.info("updating transformator {}", savingTransformator);
+                logger.info("current transformator {}", currentTransformator);
                 updated = true;
             }
             for (int savingLineNum = 0; savingLineNum < savingPodstation.getTransformators().get(savingTransNum).getLines().size(); savingLineNum++) {
@@ -288,6 +326,8 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
                 Line currentLine = currentPodstation.getTransformators().get(savingTransNum).getLines().get(savingLineNum);
                 if (!savingLine.equals(currentLine)) {
                     lineDAO.updateLineParams(savingLine);
+                    logger.info("updating line {}", savingLine);
+                    logger.info("current line {}", currentLine);
                     updated = true;
                 }
             }
@@ -295,10 +335,10 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         if (updated) {
             refreshCurrentPodstation();
         }
-        return updated;
+        return updated ? IMessageConstants.PODSTATION_SAVED : IMessageConstants.PODSTATION_NOTNING_TO_SAVE;
     }
 
-    public BasicPodstation addPodstation(String podstType, int num, String address, int dateRn, int resNum) {
+    public BasicPodstation addPodstation(String podstType, int num, String address, int dateRn, int resNum) throws PodstationAlreadyExistException {
         Podstation podstation = new Podstation();
         podstation.setPodstType(podstType);
         podstation.setNum(num);
@@ -309,10 +349,10 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         if (podstationDAO.podstationCount(podstation) == 0) {
             podstation.setRn(podstationDAO.addPodstation(podstation));
             currentPodstation = podstation;
+        } else {
+            throw new PodstationAlreadyExistException(IMessageConstants.PODSTATION_ALREADY_EXIST);
         }
         return podstation.convertToBasic();
 
     }
-
-
 }

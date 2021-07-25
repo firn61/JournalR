@@ -9,8 +9,12 @@
         <input type="hidden" th:field="*{isActive}"></input>
         <input type="hidden" th:field="*{address}"></input>
         <div class="container-fluid">
-            <span class="text-center" style="color:green;font-weight:bold" th:if="${message}"><p
-                    th:text="${message}"></p></span>
+            <span class="text-center" style="color:green;font-weight:bold" th:each="msg: ${messages}">
+                <p th:text="${msg}"></p>
+            </span>
+            <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
             <span class="text-center" style="color:red;font-weight:bold" th:unless="${currentPodstation.resNum == hostResNum}"><p
                     th:text="${noRightsMessage}"></p></span>
             <h4 class="text-dark mb-4 text-center">

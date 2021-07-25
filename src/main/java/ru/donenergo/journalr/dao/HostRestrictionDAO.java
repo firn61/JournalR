@@ -25,6 +25,7 @@ public class HostRestrictionDAO implements IHostRestrictionDAO {
     @Override
     public String getHostCyrResName(String ipAddress) {
         String queryTemplate = "SELECT RES.NAME FROM RES, USR_TABLE, HOSTS WHERE RES.RN = USR_TABLE.RN AND USR_TABLE.USR_NAME = HOSTS.RIGHTS AND HOSTS.IP = ?";
+        System.out.println(ipAddress);
         return jdbcTemplate.queryForObject(queryTemplate, new Object[]{ipAddress}, String.class);
     }
 

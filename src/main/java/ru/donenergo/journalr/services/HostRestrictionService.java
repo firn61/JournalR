@@ -44,7 +44,6 @@ public class HostRestrictionService implements IHostRestrictionService, IDataToM
         model.addAttribute("noRightsMessage", FORBIDDEN_MESSAGE);
         model.addAttribute("hostResNum", hostResNum);
         model.addAttribute("resName", resName);
-
     }
 
     @Override

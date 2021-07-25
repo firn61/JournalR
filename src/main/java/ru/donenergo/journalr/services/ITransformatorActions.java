@@ -7,8 +7,8 @@ public interface ITransformatorActions {
 
     boolean updateTransformatorValues(Transformator savingTransformator, int transNum, String additionalPostfix);
 
-    void addTransformator(Podstation podstation);
+    String addTransformator(Podstation podstation);
 
-    public void deleteTransformator(int rn);
+    String deleteTransformator(int rn);
 
 }

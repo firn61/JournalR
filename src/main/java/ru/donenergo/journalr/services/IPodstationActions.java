@@ -7,16 +7,16 @@ public interface IPodstationActions {
 
     void updatePodstationByRn(int rn);
 
-    void getCurrentPodstationFromNewPeriod(int period);
+    String getCurrentPodstationFromNewPeriod(int period);
 
     Podstation getPodstation(int rn);
 
-    void getPodstationByNumAndType(int num, String podstType, int period);
+    String getPodstationByNumAndType(int num, String podstType, int period);
 
     void podstationRnCheck(int rn);
 
-    boolean updatePodstationValues(Podstation savingPodstation);
+    String updatePodstationValues(Podstation savingPodstation);
 
-    boolean updatePodstationParams(Podstation savingPodstation);
+    String updatePodstationParams(Podstation savingPodstation);
 
 }

@@ -13,6 +13,8 @@ import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Period;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,6 +28,8 @@ public class CommonService implements ICommonService, IDataToModelSetter {
     private List<Period> periods;
     private String currentActivity;
     private Activity activity;
+    private List<String> messages = new ArrayList<>();
+    private List<String> errors = new ArrayList<>();
     static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     @Autowired
@@ -51,36 +55,55 @@ public class CommonService implements ICommonService, IDataToModelSetter {
     @Override
     public void setDataToModel(Model model) {
         logger.info("values added to model");
+        model.addAttribute("messages", new ArrayList<>(messages));
+        messages.clear();
+        model.addAttribute("errors", new ArrayList<>(errors));
+        errors.clear();
         model.addAttribute("podstationTypes", getPodstationTypes());
         model.addAttribute("basicPodstationLabels", getBasicPodstationLabels());
         model.addAttribute("periods", getPeriods());
         model.addAttribute("currentPeriod", getCurrentPeriod());
     }
 
-    public String getViewName() {
-        switch (activity) {
-            case SHOW_PODSTATION:
-                return "showpodstation";
-            case NOT_FOUND:
-                return "notfound";
-            case EDIT_PODSTATION_VALUES:
-                return "editpodstationvalues";
-            case EDIT_PODSTATION_PARAMS:
-                return "editpodstationparams";
-            case SHOW_STREETS:
-                return "showstreets";
-            case EDIT_STREETS:
-                return "editstreets";
-            default:
-                return "index";
+    public void addMessage(String message) {
+        messages.add(message);
+    }
+
+    public void addError(String error) {
+        if (!error.equals("ok")) {
+            errors.add(error);
         }
     }
 
-    public void addBasicPodstatinLabel(BasicPodstation newBasicPodstation){
+
+    public String getViewName(int rn) {
+        if (rn == 0) {
+            return "";
+        } else {
+            switch (activity) {
+                case SHOW_PODSTATION:
+                    return "showpodstation";
+                case NOT_FOUND:
+                    return "notfound";
+                case EDIT_PODSTATION_VALUES:
+                    return "editpodstationvalues";
+                case EDIT_PODSTATION_PARAMS:
+                    return "editpodstationparams";
+                case SHOW_STREETS:
+                    return "showstreets";
+                case EDIT_STREETS:
+                    return "editstreets";
+                default:
+                    return "index";
+            }
+        }
+    }
+
+    public void addBasicPodstatinLabel(BasicPodstation newBasicPodstation) {
         basicPodstationLabels.add(newBasicPodstation);
     }
 
-    public void changeViewIfIndex(){
+    public void changeViewIfIndex() {
         if (activity.equals(Activity.INDEX)) {
             activity = Activity.SHOW_PODSTATION;
         }

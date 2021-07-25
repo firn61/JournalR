@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.donenergo.journalr.exceptions.PodstationAlreadyExistException;
 import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.services.*;
@@ -43,17 +45,8 @@ public class PodstationController implements IPodstationController {
 
     //GET method
     @Override
-    public String editPodstationValues(Model model, @RequestParam(value = "message", required = false) String message,
-                                       @RequestParam(value = "rn") int rn) {
+    public String editPodstationValues(Model model, @RequestParam(value = "rn") int rn) {
         podstationService.podstationRnCheck(rn);
-        if (message != null) {
-            if (message.equals("saved")) {
-                model.addAttribute("message", IMessageConstants.PODSTATION_SAVED);
-            }
-            if (message.equals("notsaved")) {
-                model.addAttribute("message", IMessageConstants.PODSTATION_NOTNING_TO_SAVE);
-            }
-        }
         wrapData(model);
         return "editpodstationvalues";
     }
@@ -63,78 +56,73 @@ public class PodstationController implements IPodstationController {
     public String editPodstationValues(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
                                        @RequestParam(value = "action") String action) {
         if (action.equals("save")) {
-            String message;
-            if (podstationService.updatePodstationValues(podstation)) {
-                message = "saved";
+            commonService.addMessage(podstationService.updatePodstationValues(podstation));
+            } else if (action.equals("addP")) {
+                commonService.addMessage(podstationService.createIntermediateMeasure(podstation));
+            } else if (action.startsWith("pTransDel")) {
+                Integer pTransformatorRn = Integer.valueOf(action.split("&")[1]);
+                commonService.addMessage(podstationService.deleteIntermediateTransformator(pTransformatorRn));
+            }
+            model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+            return "redirect:/editpodstationvalues";
+        }
+
+        //GET method
+        @Override
+        public String editPodstationParams (Model model, @RequestParam(value = "rn") int rn){
+            podstationService.podstationRnCheck(rn);
+            wrapData(model);
+            return "editpodstationparams";
+        }
+
+        //POST method
+        @Override
+        public String editPodstationParams (Model model, @ModelAttribute("currentPodstation") Podstation podstation,
+                @RequestParam(value = "action") String action){
+            if (action.equals("save")) {
+                commonService.addMessage(podstationService.updatePodstationParams(podstation));
+            } else if (action.equals("streetsedit")) {
+
             } else {
-                message = "notsaved";
-            }
-            model.addAttribute("message", message);
-        } else if (action.equals("addP")) {
-            podstationService.createIntermediateMeasure(podstation);
-        } else if (action.startsWith("pTransDel")) {
-            Integer pTransformatorRn = Integer.valueOf(action.split("&")[1]);
-            podstationService.deleteIntermediateTransformator(pTransformatorRn);
-        } else {
-
-        }
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/editpodstationvalues";
-    }
-
-    //GET method
-    @Override
-    public String editPodstationParams(Model model, @RequestParam(value = "message", required = false) String message,
-                                       @RequestParam(value = "rn") int rn) {
-        podstationService.podstationRnCheck(rn);
-        wrapData(model);
-        return "editpodstationparams";
-    }
-
-    //POST method
-    @Override
-    public String editPodstationParams(Model model, @ModelAttribute("currentPodstation") Podstation podstation,
-                                       @RequestParam(value = "action") String action) {
-        if (action.equals("save")) {
-            podstationService.updatePodstationParams(podstation);
-        } else if (action.equals("streetsedit")) {
-
-        } else {
-            String target = action.split("&")[0];
-            String operation = action.split("&")[1];
-            int rn = Integer.valueOf(action.split("&")[2]);
-            if (target.equals("trans")) {
-                if (operation.equals("add")) {
-                    podstationService.addTransformator(podstation);
-                } else if (operation.equals("del")) {
-                    podstationService.deleteTransformator(rn);
-                }
-            } else if (target.equals("line")) {
-                if (operation.equals("add")) {
-                    podstationService.addLine(rn);
-                } else if (operation.equals("up")) {
-                    podstationService.moveLine(rn, "up");
-                } else if (operation.equals("down")) {
-                    podstationService.moveLine(rn, "down");
-                } else if (operation.equals("del")) {
-                    podstationService.deleteLine(rn);
+                String target = action.split("&")[0];
+                String operation = action.split("&")[1];
+                int rn = Integer.valueOf(action.split("&")[2]);
+                if (target.equals("trans")) {
+                    if (operation.equals("add")) {
+                        commonService.addMessage(podstationService.addTransformator(podstation));
+                    } else if (operation.equals("del")) {
+                        commonService.addMessage(podstationService.deleteTransformator(rn));
+                    }
+                } else if (target.equals("line")) {
+                    if (operation.equals("add")) {
+                        commonService.addMessage(podstationService.addLine(rn));
+                    } else if (operation.equals("up")) {
+                        commonService.addMessage(podstationService.moveLine(rn, "up"));
+                    } else if (operation.equals("down")) {
+                        commonService.addMessage(podstationService.moveLine(rn, "down"));
+                    } else if (operation.equals("del")) {
+                        commonService.addMessage(podstationService.deleteLine(rn));
+                    }
                 }
             }
+            model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+            return "redirect:/editpodstationparams";
         }
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/editpodstationparams";
+
+        @Override
+        public String addPodstation (Model model, @RequestParam(value = "podstType") String podstType,
+        @RequestParam(value = "num") int num,
+        @RequestParam(value = "address") String address){
+            try {
+                BasicPodstation basicPodstation = podstationService.addPodstation(podstType, num, address,
+                        commonService.getCurrentPeriod(), hostRestrictionService.getHostResNum());
+                commonService.addBasicPodstatinLabel(basicPodstation);
+            } catch (PodstationAlreadyExistException e) {
+                logger.info(e.getMessage());
+            }
+            model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+            return "redirect:/editpodstationparams";
+        }
+
+
     }
-
-    @GetMapping("/addpodstation")
-    public String savePodstation(Model model, @RequestParam(value="podstType") String podstType,
-                                 @RequestParam(value = "num") int num,
-                                 @RequestParam(value = "address") String address){
-        BasicPodstation basicPodstation = podstationService.addPodstation(podstType, num, address,
-                commonService.getCurrentPeriod(), hostRestrictionService.getHostResNum());
-        commonService.addBasicPodstatinLabel(basicPodstation);
-        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/editpodstationparams";
-    }
-
-
-}

@@ -4,8 +4,8 @@ import ru.donenergo.journalr.models.Podstation;
 
 public interface IIntermediateActions {
 
-    void createIntermediateMeasure(Podstation podstation);
+    String createIntermediateMeasure(Podstation podstation);
 
-    void deleteIntermediateTransformator(int rn);
+    String deleteIntermediateTransformator(int rn);
 
 }

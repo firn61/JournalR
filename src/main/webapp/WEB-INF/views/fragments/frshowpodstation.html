@@ -1,5 +1,8 @@
 <div th:fragment="show">
     <div class="container-fluid">
+                    <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
         <h4 class="text-dark mb-4 text-center">
             <p th:text="${currentPodstation.podstType} + '-' + ${currentPodstation.numStr} + ', ' + ${currentPodstation.address}"></h4>
         <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">

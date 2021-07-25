@@ -36,38 +36,38 @@ public class CommonController implements ICommonController {
         logger.info("ipAddress: {}", ipAddress);
         hostRestrictionService.invokeValues(ipAddress);
         commonService.setDataToModel(model);
-        model.addAttribute("currentPodstation", new Podstation(0,0, ""));
+        model.addAttribute("currentPodstation", new Podstation(0, 0, ""));
         hostRestrictionService.setDataToModel(model);
         return "index";
     }
 
     @GetMapping("/sweditpodstationparams")
-    public String switchEditPodstationParams(Model model){
+    public String switchEditPodstationParams(Model model) {
         commonService.setActivity(Activity.EDIT_PODSTATION_PARAMS);
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
     @GetMapping("/swshowpodstation")
     public String switchShowPodstation(Model model) {
         commonService.setActivity(Activity.SHOW_PODSTATION);
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
     @GetMapping("/sweditpodstationvalues")
     public String switchEditPodstationValues(Model model) {
         commonService.setActivity(Activity.EDIT_PODSTATION_VALUES);
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
     @Override
     public String changePeriod(Model model, @RequestParam(value = "period") int period) {
         commonService.refreshCommonValues(period);
-        podstationService.getCurrentPodstationFromNewPeriod(period);
+        commonService.addError(podstationService.getCurrentPodstationFromNewPeriod(period));
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
     @Override
@@ -75,16 +75,18 @@ public class CommonController implements ICommonController {
         commonService.changeViewIfIndex();
         podstationService.updatePodstationByRn(rn);
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
     @Override
     public String searchPodstation(Model model, @RequestParam(value = "podstType") String podstType,
                                    @RequestParam(value = "podstationNum") Integer podstationNum) {
         commonService.changeViewIfIndex();
-        podstationService.getPodstationByNumAndType(podstationNum, podstType, commonService.getCurrentPeriod());
+        if (podstationNum != null) {
+            commonService.addError(podstationService.getPodstationByNumAndType(podstationNum, podstType, commonService.getCurrentPeriod()));
+        }
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());
-        return "redirect:/" + commonService.getViewName();
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
 }
