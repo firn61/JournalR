@@ -54,4 +54,9 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         return houseSegmentDAO.getStreet(streetParams[0], streetParams[1]);
     }
 
+    public void addHouseSegment(HouseSegment houseSegment){
+
+        houseSegmentDAO.addHouseSegment(houseSegment);
+    }
+
 }

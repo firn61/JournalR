@@ -1,6 +1,6 @@
 <div th:fragment="housesegments">
     <div class="container-fluid">
-        <form th:action="@{/edithousesegment}" method="POST" th:object="${streets}">
+        <form th:action="@{/edithousesegment}" method="POST" th:object="${blankHouseSegment}">
             <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
                 <div class="card-body">
                     <div class="input-group" th:each="transformator : ${currentPodstation.transformators}">
@@ -10,7 +10,7 @@
                                th:checked="${transformator.num==selectedTransformator}"/>
                     </div>
                     <input list="streets" class="border rounded shadow custom-select" id="streetsselect" name="street"
-                           style="height: 34px;width: 300px;" th:disabled="${rightsMessage != 'Ok'}"></input>
+                           style="height: 34px;width: 300px;" th:disabled="${currentPodstation.resNum != hostResNum}"></input>
                     <datalist id="streets" class="border rounded shadow custom-select"
                               style="height: 34px;width: 0px;" hidden>
                         <option th:each="street : ${streets}"
@@ -18,19 +18,23 @@
                                 th:value="${street.streetName} + ', ' + ${street.streetType}">
                         </option>
                     </datalist>
-                    <input class="border rounded shadow" type="number" name="housenum1" placeholder="Номер дома1.."
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${rightsMessage != 'Ok'}">
-                    <input class="border rounded shadow" type="text" name="letter1" placeholder="Корпус1.."
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${rightsMessage != 'Ok'}">
-                    <input class="border rounded shadow" type="number" name="housenum2" placeholder="Номер дома2.."
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${rightsMessage != 'Ok'}">
-                    <input class="border rounded shadow" type="text" name="letter2" placeholder="Корпус2.."
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${rightsMessage != 'Ok'}">
+
+                    <input class="border rounded shadow" type="number" name="house1" placeholder="Номер дома1.." th:field = "*{house1}"
+                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
+                    <input class="border rounded shadow" type="text" name="house1building" placeholder="Корпус1.." th:field = "*{house1Building}"
+                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;"
+                           th:disabled="${currentPodstation.resNum != hostResNum}">
+                    <input class="border rounded shadow" type="number" name="house2" placeholder="Номер дома2.." th:field = "*{house2}"
+                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;"
+                           th:disabled="${currentPodstation.resNum != hostResNum}">
+                    <input class="border rounded shadow" type="text" name="house2building" placeholder="Корпус2.." th:field = "*{house2Building}"
+                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
                     <button class="btn btn-primary btn-sm shadow" type="submit" th:name="action" th:value="add"
-                            style="margin-left: 10px;height: 34px;width: 100px;" th:disabled="${rightsMessage != 'Ok'}">
+                            style="margin-left: 10px;height: 34px;width: 100px;" th:disabled="${currentPodstation.resNum != hostResNum}">
                         <i class="fa fa-plus" style="margin-right: 5px;"></i>
                         Добавить
                     </button>
+
                 </div>
             </div>
             <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
@@ -62,7 +66,7 @@
                                 <td>
                                     <button type="submit" class="btn btn-danger btn-sm shadow" th:name="delete"
                                             th:value="${houseSegment.rn}" title="Удалить"
-                                            th:disabled="${rightsMessage != 'Ok'}"
+                                            th:disabled="${currentPodstation.resNum != hostResNum}"
                                             th:onclick="return confirm('Удалить сегмент?');">
                                         <i class="fa fa-trash-alt" style="margin-right: 5px;"></i>
                                     </button>

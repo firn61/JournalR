@@ -104,4 +104,21 @@ public class HouseSegment {
     public void setHouse2Building(String house2Building) {
         this.house2Building = house2Building;
     }
+
+    @Override
+    public String toString() {
+        return "HouseSegment{" +
+                "rn=" + rn +
+                ", strPodstation='" + strPodstation + '\'' +
+                ", trNum=" + trNum +
+                ", fider='" + fider + '\'' +
+                ", streetRn=" + streetRn +
+                ", streetName='" + streetName + '\'' +
+                ", streetType='" + streetType + '\'' +
+                ", house1=" + house1 +
+                ", house1Building='" + house1Building + '\'' +
+                ", house2=" + house2 +
+                ", house2Building='" + house2Building + '\'' +
+                '}';
+    }
 }

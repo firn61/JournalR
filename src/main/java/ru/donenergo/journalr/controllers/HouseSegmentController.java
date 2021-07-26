@@ -23,6 +23,7 @@ public class HouseSegmentController implements IHouseSegmentController, IDataWra
     private final CommonService commonService;
     static final Logger logger = LoggerFactory.getLogger(HouseSegmentController.class);
 
+    @Autowired
     public HouseSegmentController(HouseSegmentService houseSegmentService, PodstationService podstationService, HostRestrictionService hostRestrictionService, CommonService commonService) {
         this.houseSegmentService = houseSegmentService;
         this.podstationService = podstationService;
@@ -72,13 +73,26 @@ public class HouseSegmentController implements IHouseSegmentController, IDataWra
     @Override
     public String editHouseSegment(Model model, @RequestParam(value = "rn") int podstationRn) {
         model.addAttribute("houseSegments", houseSegmentService.getHouseSegment(podstationService.getCurrentPodstation()));
+        HouseSegment blankHouseSegment = new HouseSegment();
+        model.addAttribute("blankHouseSegment", blankHouseSegment);
+        model.addAttribute("selectedTransformator", podstationService.getFirstTransformator());
         wrapData(model);
         return "edithousesegment";
     }
 
     //POST method
     @Override
-    public String editHouseSegment(Model model, HouseSegment houseSegment) {
-        return null;
+    public String editHouseSegment(Model model, @ModelAttribute(value = "street") String street,
+                                   @ModelAttribute(value="blankHouseSegment") HouseSegment newHouseSegment,
+                                   @ModelAttribute(value = "trans") Integer trans,
+                                   @ModelAttribute(value = "action") String action) {
+        logger.info("newHouseSegment {}", newHouseSegment);
+        newHouseSegment.setStrPodstation(podstationService.getCurrentPodstationShortName());
+        newHouseSegment.setTrNum(1);
+        newHouseSegment.setFider(podstationService.getCurrentPodstation().getTransformators().get(0).getFider());
+        newHouseSegment.setStreetRn(houseSegmentService.getStreet(street).getRn());
+        logger.info("updated hs {}", newHouseSegment);
+
+        return "redirect:/edithousesegment";
     }
 }

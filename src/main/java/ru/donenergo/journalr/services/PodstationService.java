@@ -49,6 +49,14 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         currentPodstation = getPodstation(currentPodstation.getRn());
     }
 
+    public int getFirstTransformator() {
+        if (currentPodstation.getTransformators() != null) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     @Override
     public Podstation getPodstation(int rn) {
         Podstation podstation = podstationDAO.getPodstation(rn);
@@ -70,7 +78,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         return podstation;
     }
 
-    public Podstation getCurrentPodstation(){
+    public Podstation getCurrentPodstation() {
         return currentPodstation;
     }
 

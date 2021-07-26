@@ -14,6 +14,6 @@ public interface IHouseSegmentController {
     String editHouseSegment(Model model, int rn);
 
     @PostMapping("/edithousesegment")
-    String editHouseSegment(Model model, HouseSegment houseSegment);
+    String editHouseSegment(Model model, String street, HouseSegment newHouseSegment, Integer transNum, String action);
 
 }
