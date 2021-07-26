@@ -62,6 +62,12 @@ public class CommonController implements ICommonController {
         return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
     }
 
+    @GetMapping("/swshowhousesegment")
+    public String switchShowHouseSegment(Model model){
+        commonService.setActivity(Activity.SHOW_HOUSE_SEGMENT);
+        return "redirect:/" + commonService.getViewName(podstationService.getCurrentPodstationRn());
+    }
+
     @Override
     public String changePeriod(Model model, @RequestParam(value = "period") int period) {
         commonService.refreshCommonValues(period);

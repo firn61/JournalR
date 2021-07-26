@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface IHouseSegmentDAO {
 
-    List<HouseSegment> getHouseSegment(Podstation podstation, String houseSegmentNum);
+    List<HouseSegment> getHouseSegment(Podstation podstation);
 
-    List<HouseSegment> getHouseSegment(Transformator transformator, String houseSegmentNum);
+    List<HouseSegment> getHouseSegment(Podstation podstation, int trNum);
 
     List<HouseSegment> getHouseSegment(Street street);
 
-    List<HouseSegment> getHouseSegment(Street street, int houseNum);
+    List<HouseSegment> getHouseSegment(Street street, Integer houseNum);
 
-    void addHouseSegment(HouseSegment houseSegment);
+    Integer addHouseSegment(HouseSegment houseSegment);
 
     void deleteHouseSegment(HouseSegment houseSegment);
 

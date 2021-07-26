@@ -14,5 +14,6 @@ public interface IMessageConstants {
     String LINE_MOVED_UP = "Линия перемещена выше";
     String LINE_MOVED_DOWN = "Линия перемещена ниже";
     String LINE_CANNOT_MOVED = "Невозможно переместить линию";
+    String SEGMENT = "Сегменты ";
 
 }

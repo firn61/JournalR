@@ -89,10 +89,10 @@ public class CommonService implements ICommonService, IDataToModelSetter {
                     return "editpodstationvalues";
                 case EDIT_PODSTATION_PARAMS:
                     return "editpodstationparams";
-                case SHOW_STREETS:
-                    return "showstreets";
-                case EDIT_STREETS:
-                    return "editstreets";
+                case SHOW_HOUSE_SEGMENT:
+                    return "showhousesegment";
+                case EDIT_HOUSE_SEGMENT:
+                    return "edithousesegment";
                 default:
                     return "index";
             }

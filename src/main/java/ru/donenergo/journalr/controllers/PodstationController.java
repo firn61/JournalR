@@ -15,7 +15,7 @@ import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.services.*;
 
 @Controller
-public class PodstationController implements IPodstationController {
+public class PodstationController implements IPodstationController, IDataWrapper {
 
     private final CommonService commonService;
     private final HostRestrictionService hostRestrictionService;
@@ -29,7 +29,8 @@ public class PodstationController implements IPodstationController {
         this.podstationService = podstationService;
     }
 
-    private void wrapData(Model model) {
+    @Override
+    public void wrapData(Model model) {
         commonService.setDataToModel(model);
         hostRestrictionService.setDataToModel(model);
         podstationService.setDataToModel(model);
@@ -81,8 +82,9 @@ public class PodstationController implements IPodstationController {
                 @RequestParam(value = "action") String action){
             if (action.equals("save")) {
                 commonService.addMessage(podstationService.updatePodstationParams(podstation));
-            } else if (action.equals("streetsedit")) {
-
+            } else if (action.equals("edithousesegment")) {
+                model.addAttribute("rn", podstationService.getCurrentPodstationRn());
+                return "redirect:/edithousesegment";
             } else {
                 String target = action.split("&")[0];
                 String operation = action.split("&")[1];

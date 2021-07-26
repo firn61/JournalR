@@ -1,0 +1,64 @@
+<div th:fragment="housesegments">
+    <div class="container-fluid">
+                <span class="text-center" style="color:green;font-weight:bold" th:each="msg: ${messages}">
+                <p th:text="${msg}"></p>
+            </span>
+        <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
+        <form th:action="@{/showhousesegment}" method="GET" th:object="${streets}">
+            <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
+                <div class="card-body">
+                    <input list="streets" class="border rounded shadow custom-select" id="streetsselect"
+                           name="street" style="height: 34px;width: 300px;"></input>
+                    <datalist id="streets" class="border rounded shadow custom-select"
+                              style="height: 34px;width: 0px;" hidden>
+                        <option th:each="street : ${streets}"
+                                th:selected="${street.rn}==${selectedStreet}"
+                                th:value="${street.streetName} + ', ' + ${street.streetType}">
+                        </option>
+                    </datalist>
+                    <input class="border rounded shadow" type="number" name="housenum"
+                           placeholder="Номер дома.."
+                           style="height: 34px;width: 150px;margin-left: 5px;">
+                    <button class="btn btn-primary btn-sm shadow" type="submit"
+                            style="margin-left: 40px;height: 34px;width: 100px;"><i class="fa fa-search-location"
+                                                                                    style="margin-right: 5px;"></i>Поиск
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
+            <div class="card-body">
+                <div class="table-responsive shadow" style="margin-top: 20px;">
+                    <table class="table table-striped table-bordered table-hover table-sm dataTable my-0">
+                        <tr>
+                            <th>Подстанция</th>
+                            <th>Трансформатор</th>
+                            <th>Фидер</th>
+                            <th>Улица</th>
+                            <th>Дом1</th>
+                            <th>Дом2</th>
+                        </tr>
+                        <tr th:each="houseSegment : ${houseSegments}">
+                            <td><span th:text="${houseSegment.strPodstation}"></span></td>
+                            <td><span th:text="${houseSegment.trNum}"></span></td>
+                            <td><span th:text="${houseSegment.fider}"></span></td>
+                            <td>
+                                <span th:text="${houseSegment.streetType} + ', '+ ${houseSegment.streetName}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${houseSegment.house1} + ' ' + ${houseSegment.house1Building}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${houseSegment.house2} + ' ' + ${houseSegment.house2Building}"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

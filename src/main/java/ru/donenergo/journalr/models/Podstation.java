@@ -16,6 +16,10 @@ public class Podstation extends BasicPodstation{
     public Podstation() {
     }
 
+    public String getDispName(){
+        return super.toString();
+    }
+
     @Override
     public String toString() {
         return "Podstation{" +

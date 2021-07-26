@@ -70,6 +70,10 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         return podstation;
     }
 
+    public Podstation getCurrentPodstation(){
+        return currentPodstation;
+    }
+
     public int getCurrentPodstationRn() {
         return currentPodstation.getRn();
     }
@@ -84,7 +88,10 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
     @Override
     public void setDataToModel(Model model) {
         model.addAttribute("currentPodstation", currentPodstation);
+    }
 
+    public String getCurrentPodstationShortName() {
+        return currentPodstation.getPodstType() + currentPodstation.getNumStr();
     }
 
     @Override
@@ -184,7 +191,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             currentTransformator = currentPodstation.getTransformators().get(transNum);
         } else {
             for (int transPNum = 0; transPNum < currentPodstation.getTransformatorsP().size(); transPNum++) {
-                if (currentPodstation.getTransformatorsP().get(transPNum).getRn() == savingTransformator.getRn()){
+                if (currentPodstation.getTransformatorsP().get(transPNum).getRn() == savingTransformator.getRn()) {
                     currentTransformator = currentPodstation.getTransformatorsP().get(transPNum);
                     logger.info("saving trans from intermediate {}", currentTransformator);
                 }
@@ -265,13 +272,10 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
     @Override
     public String moveLine(int rn, String direction) {
         int shift = 0;
-        String cyrDirection = "";
         if (direction.equals("up")) {
             shift = -1;
-            cyrDirection = IMessageConstants.LINE_MOVED_UP;
         } else if (direction.equals("down")) {
             shift = 1;
-            cyrDirection = IMessageConstants.LINE_MOVED_DOWN;
         }
         Line currentLine = lineDAO.getLine(rn, NORMAL);
         Line swappedLine;
@@ -288,7 +292,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             lineDAO.updateLineParams(currentLine);
             lineDAO.updateLineParams(swappedLine);
             refreshCurrentPodstation();
-            return cyrDirection;
+            return shift == -1 ? IMessageConstants.LINE_MOVED_UP : IMessageConstants.LINE_MOVED_DOWN;
         } else {
             return IMessageConstants.LINE_CANNOT_MOVED;
         }
