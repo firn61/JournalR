@@ -83,6 +83,7 @@ public class PodstationController implements IPodstationController, IDataWrapper
             if (action.equals("save")) {
                 commonService.addMessage(podstationService.updatePodstationParams(podstation));
             } else if (action.equals("edithousesegment")) {
+                commonService.setActivity(Activity.EDIT_HOUSE_SEGMENT);
                 model.addAttribute("rn", podstationService.getCurrentPodstationRn());
                 return "redirect:/edithousesegment";
             } else {

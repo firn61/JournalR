@@ -19,6 +19,6 @@ public interface IHouseSegmentDAO {
 
     Integer addHouseSegment(HouseSegment houseSegment);
 
-    void deleteHouseSegment(HouseSegment houseSegment);
+    void deleteHouseSegment(int rn);
 
 }

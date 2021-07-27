@@ -21,13 +21,14 @@ public class ReportsDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<String[]> getReportAllPodstations(String currentDate){
-        List<String[]> result = jdbcTemplate.query("SELECT a.tp, r.NAME, a.adr, d.SDATE, t.i_a, t.i_b, t.i_c, t.i_n \n" +
+    public List<String[]> getReportAllPodstations(int currentDate){
+        String queryTemplate = "SELECT a.tp, r.NAME, a.adr, d.SDATE, t.i_a, t.i_b, t.i_c, t.i_n \n" +
                 "FROM (SELECT RN, a.PODST_TYPE|| '-' || a.NUM AS tp, a.ADDRESS AS adr, RES_NUM AS res, DATE_RN AS daten\n" +
                 "FROM PODSTATION a where a.DATE_RN = ?) AS a\n" +
                 "left join (SELECT TP_RN, sum(I_A) as i_a, sum(I_B) as i_b, sum(I_C)as i_c, sum(I_N) as i_n FROM TRANSFORMATOR group by tp_rn) as t on t.TP_RN = a.RN\n" +
                 "left join (select NAME, NUM from RES) as r on r.NUM=a.res \n" +
-                "left join (select RN, SDATE from DATES) as d on d.RN=a.daten", new Object[]{currentDate}, new ResultSetExtractor<List>() {
+                "left join (select RN, SDATE from DATES) as d on d.RN=a.daten";
+        List<String[]> result = jdbcTemplate.query(queryTemplate, new Object[]{currentDate}, new ResultSetExtractor<List>() {
             @Override
             public List extractData(ResultSet rs) throws SQLException, DataAccessException {
                 List<String[]> extractedList = new ArrayList<String[]>();
@@ -49,14 +50,15 @@ public class ReportsDAO {
         return result;
     }
 
-    public List<String[]> getOverloadedPodstations(String currentDate) {
-        List<String[]> overloadedPodstations = jdbcTemplate.query("SELECT p.RES_NUM, p.PODST_TYPE || '-' || p.NUM_STR,  r.NUM, r.FIDER, r.POWER, ROUND(r.POWER/0.692),  \n" +
+    public List<String[]> getOverloadedPodstations(int currentDate) {
+        String queryTemplate = "SELECT p.RES_NUM, p.PODST_TYPE || '-' || p.NUM_STR,  r.NUM, r.FIDER, r.POWER, ROUND(r.POWER/0.692),  \n" +
                 "ROUND(r.POWER/0.692)-r.I_A as dA, ROUND(r.POWER/0.692)-r.I_B as dB, ROUND(r.POWER/0.692)-r.I_C as dC, \n" +
                 "r.I_A, r.I_B, r.I_C, r.I_N, r.U_A, r.U_B, r.U_C, r.DATETIME, r.MONTER FROM PODSTATION p \n" +
                 "LEFT JOIN (SELECT TP_RN, RN, NUM, FIDER, POWER, POWER-I_A as dA, POWER-I_B as dB, \n" +
                 "POWER-I_C as dC, I_A, I_B, I_C, I_N, U_A, U_B, U_C, DATETIME, MONTER FROM TRANSFORMATOR \n" +
                 "WHERE ROUND(POWER/0.692)-I_A < 0 OR ROUND(POWER/0.692)-I_B <0 OR ROUND(POWER/0.692)-I_C <0) as r \n" +
-                "ON r.TP_RN=p.RN WHERE r.TP_RN IS NOT NULL AND p.DATE_RN = ? ORDER BY p.NUM", new Object[]{currentDate}, new ResultSetExtractor<List>() {
+                "ON r.TP_RN=p.RN WHERE r.TP_RN IS NOT NULL AND p.DATE_RN = ? ORDER BY p.NUM";
+        List<String[]> overloadedPodstations = jdbcTemplate.query(queryTemplate, new Object[]{currentDate}, new ResultSetExtractor<List>() {
             @Override
             public List extractData(ResultSet rs) throws SQLException, DataAccessException {
                 List<String[]> extractedList = new ArrayList<String[]>();
@@ -88,5 +90,7 @@ public class ReportsDAO {
         });
         return overloadedPodstations;
     }
+
+
 
 }

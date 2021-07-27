@@ -71,11 +71,18 @@ public class HouseSegmentController implements IHouseSegmentController, IDataWra
 
     //GET method
     @Override
-    public String editHouseSegment(Model model, @RequestParam(value = "rn") int podstationRn) {
-        model.addAttribute("houseSegments", houseSegmentService.getHouseSegment(podstationService.getCurrentPodstation()));
-        HouseSegment blankHouseSegment = new HouseSegment();
-        model.addAttribute("blankHouseSegment", blankHouseSegment);
-        model.addAttribute("selectedTransformator", podstationService.getFirstTransformator());
+    public String editHouseSegment(Model model, @RequestParam(value = "rn") int podstationRn,
+                                   @RequestParam(value = "trans", required = false) Integer trans) {
+        int selectedTransformator;
+        if (trans == null) {
+            selectedTransformator = podstationService.getFirstTransformator();
+        } else {
+            selectedTransformator = trans;
+        }
+        model.addAttribute("houseSegments", houseSegmentService.getHouseSegment(podstationService.getCurrentPodstation(), selectedTransformator));
+        model.addAttribute("blankHouseSegment", new HouseSegment());
+        logger.info("trans {}", trans);
+            model.addAttribute("selectedTransformator", selectedTransformator);
         wrapData(model);
         return "edithousesegment";
     }
@@ -83,16 +90,27 @@ public class HouseSegmentController implements IHouseSegmentController, IDataWra
     //POST method
     @Override
     public String editHouseSegment(Model model, @ModelAttribute(value = "street") String street,
-                                   @ModelAttribute(value="blankHouseSegment") HouseSegment newHouseSegment,
+                                   @ModelAttribute(value = "blankHouseSegment") HouseSegment newHouseSegment,
                                    @ModelAttribute(value = "trans") Integer trans,
+                                   @ModelAttribute(value = "delete") String delete,
                                    @ModelAttribute(value = "action") String action) {
-        logger.info("newHouseSegment {}", newHouseSegment);
-        newHouseSegment.setStrPodstation(podstationService.getCurrentPodstationShortName());
-        newHouseSegment.setTrNum(1);
-        newHouseSegment.setFider(podstationService.getCurrentPodstation().getTransformators().get(0).getFider());
-        newHouseSegment.setStreetRn(houseSegmentService.getStreet(street).getRn());
-        logger.info("updated hs {}", newHouseSegment);
-
+        logger.info("hs {}, trans {}, action {}, street {}, delete {}", newHouseSegment, trans, action, street, delete);
+        if (action.equals("add")){
+            if (!street.equals("")){
+                newHouseSegment.setStrPodstation(podstationService.getCurrentPodstationShortName());
+                newHouseSegment.setTrNum(trans);
+                newHouseSegment.setFider(podstationService.getCurrentPodstation().getTransformators().get(trans-1).getFider());
+                newHouseSegment.setStreetRn(houseSegmentService.getStreet(street).getRn());
+                newHouseSegment.setStreetName(street.split(", ")[0]);
+                newHouseSegment.setStreetType(street.split(", ")[1]);
+                commonService.addMessage(houseSegmentService.addHouseSegment(newHouseSegment));
+            }
+        }
+        else if (!delete.equals("")) {
+            commonService.addMessage(houseSegmentService.deleteHouseSegment(Integer.valueOf(delete)));
+        }
+        model.addAttribute("trans", trans);
+        model.addAttribute("rn", podstationService.getCurrentPodstationRn());
         return "redirect:/edithousesegment";
     }
 }

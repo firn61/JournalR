@@ -12,7 +12,7 @@ import ru.donenergo.journalr.models.Period;
 import java.util.List;
 
 @Repository
-public class CommonDAO implements ICommonDAO{
+public class CommonDAO implements ICommonDAO, ISystemDAO{
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -40,6 +40,19 @@ public class CommonDAO implements ICommonDAO{
 
     @Override
     public List<Period> getPeriods(int dateRn) {
-        return jdbcTemplate.query("SELECT RN, SDATE FROM DATES WHERE RN <= ?", new Object[]{dateRn}, new PeriodMapper());
+        String queryTemplate = "SELECT RN, SDATE FROM DATES WHERE RN <= ?";
+        return jdbcTemplate.query(queryTemplate, new Object[]{dateRn}, new PeriodMapper());
+    }
+
+    @Override
+    public String getSystemValue(String sparam) {
+        String queryTemplate = "SELECT SVALUE FROM SYSTEM WHERE SPARAM = ?";
+        return jdbcTemplate.queryForObject(queryTemplate, new Object[]{sparam}, String.class);
+    }
+
+    @Override
+    public void updateSystemValue(String sValue, String sParam){
+        String queryTemplate = "UPDATE SYSTEM SET SVALUE = ? WHERE SPARAM = ?";
+        jdbcTemplate.update(queryTemplate, new Object[]{sValue, sParam});
     }
 }

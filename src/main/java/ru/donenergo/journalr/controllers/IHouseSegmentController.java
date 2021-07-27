@@ -11,9 +11,9 @@ public interface IHouseSegmentController {
     String showHouseSegment(Model model, String streetName, Integer houseNum);
 
     @GetMapping("/edithousesegment")
-    String editHouseSegment(Model model, int rn);
+    String editHouseSegment(Model model, int rn, Integer trans);
 
     @PostMapping("/edithousesegment")
-    String editHouseSegment(Model model, String street, HouseSegment newHouseSegment, Integer transNum, String action);
+    String editHouseSegment(Model model, String street, HouseSegment newHouseSegment, Integer transNum, String delete, String action);
 
 }

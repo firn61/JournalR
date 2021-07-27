@@ -61,9 +61,9 @@ public class HouseSegmentDAO implements IHouseSegmentDAO, IStreetDAO {
     }
 
     @Override
-    public void deleteHouseSegment(HouseSegment houseSegment) {
+    public void deleteHouseSegment(int rn) {
         String queryTemplate = "execute procedure SEGMENT_DELETE(?)";
-        jdbcTemplate.update(queryTemplate, new Object[]{houseSegment.getRn()});
+        jdbcTemplate.update(queryTemplate, new Object[]{rn});
     }
 
     @Override

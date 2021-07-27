@@ -2,8 +2,8 @@ package ru.donenergo.journalr.dao;
 
 public interface ISystemDAO {
 
-    String getValue(String sParam);
+    String getSystemValue(String sParam);
 
-    void updateValue(String sValue, String sParam);
+    void updateSystemValue(String sValue, String sParam);
 
 }

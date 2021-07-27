@@ -1,5 +1,14 @@
 <div th:fragment="housesegments">
     <div class="container-fluid">
+        <span class="text-center" style="color:red;font-weight:bold"
+              th:unless="${currentPodstation.resNum == hostResNum}"><p
+                th:text="${noRightsMessage}"></p></span>
+        <span class="text-center" style="color:green;font-weight:bold" th:each="msg: ${messages}">
+                <p th:text="${msg}"></p>
+            </span>
+        <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
         <form th:action="@{/edithousesegment}" method="POST" th:object="${blankHouseSegment}">
             <div class="card shadow" style="max-width: 1100px;margin-right: auto;margin-left: auto;">
                 <div class="card-body">
@@ -20,17 +29,17 @@
                     </datalist>
 
                     <input class="border rounded shadow" type="number" name="house1" placeholder="Номер дома1.." th:field = "*{house1}"
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
+                           style="height: 34px;width: 140px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
                     <input class="border rounded shadow" type="text" name="house1building" placeholder="Корпус1.." th:field = "*{house1Building}"
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;"
+                           style="height: 34px;width: 140px;margin-left: 5px;width: 140px;max-width: 140px;"
                            th:disabled="${currentPodstation.resNum != hostResNum}">
                     <input class="border rounded shadow" type="number" name="house2" placeholder="Номер дома2.." th:field = "*{house2}"
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;"
+                           style="height: 34px;width: 140px;margin-left: 5px;width: 140px;max-width: 140px;"
                            th:disabled="${currentPodstation.resNum != hostResNum}">
                     <input class="border rounded shadow" type="text" name="house2building" placeholder="Корпус2.." th:field = "*{house2Building}"
-                           style="height: 34px;width: 150px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
+                           style="height: 34px;width: 140px;margin-left: 5px;width: 140px;max-width: 140px;" th:disabled="${currentPodstation.resNum != hostResNum}">
                     <button class="btn btn-primary btn-sm shadow" type="submit" th:name="action" th:value="add"
-                            style="margin-left: 10px;height: 34px;width: 100px;" th:disabled="${currentPodstation.resNum != hostResNum}">
+                            style="margin-left: 10px;height: 34px;width: 120px;" th:disabled="${currentPodstation.resNum != hostResNum}">
                         <i class="fa fa-plus" style="margin-right: 5px;"></i>
                         Добавить
                     </button>

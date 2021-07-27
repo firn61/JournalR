@@ -9,9 +9,9 @@ public class HouseSegment {
     private int streetRn;
     private String streetName;
     private String streetType;
-    private int house1;
+    private String house1;
     private String house1Building;
-    private int house2;
+    private String house2;
     private String house2Building;
 
     public HouseSegment() {
@@ -73,11 +73,11 @@ public class HouseSegment {
         this.streetType = streetType;
     }
 
-    public int getHouse1() {
+    public String getHouse1() {
         return house1;
     }
 
-    public void setHouse1(int house1) {
+    public void setHouse1(String house1) {
         this.house1 = house1;
     }
 
@@ -89,11 +89,11 @@ public class HouseSegment {
         this.house1Building = house1Building;
     }
 
-    public int getHouse2() {
+    public String getHouse2() {
         return house2;
     }
 
-    public void setHouse2(int house2) {
+    public void setHouse2(String house2) {
         this.house2 = house2;
     }
 

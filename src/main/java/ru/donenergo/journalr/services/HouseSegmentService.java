@@ -42,21 +42,51 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         return houseSegmentDAO.getHouseSegment(podstation);
     }
 
+    public List<HouseSegment> getHouseSegment(Podstation podstation, int trNum) {
+        return houseSegmentDAO.getHouseSegment(podstation, trNum);
+    }
+
     public List<HouseSegment> getHouseSegment(Street street) {
         return houseSegmentDAO.getHouseSegment(street);
     }
+
     public List<HouseSegment> getHouseSegment(Street street, Integer houseNum) {
         return houseSegmentDAO.getHouseSegment(street, houseNum);
     }
 
-    public Street getStreet(String streetName){
-        String[] streetParams = streetName.split(", ");
-        return houseSegmentDAO.getStreet(streetParams[0], streetParams[1]);
+    public Street getStreet(String streetName) {
+        if (streetName.contains(", ")) {
+            String[] streetParams = streetName.split(", ");
+            return houseSegmentDAO.getStreet(streetParams[0], streetParams[1]);
+        } else return new Street();
     }
 
-    public void addHouseSegment(HouseSegment houseSegment){
-
+    public String addHouseSegment(HouseSegment houseSegment) {
+        if (houseSegment.getHouse1().equals("")) {
+            houseSegment.setHouse1("0");
+        }
+        if (houseSegment.getHouse2().equals("")) {
+            houseSegment.setHouse2("0");
+        }
+        if (Integer.valueOf(houseSegment.getHouse2()) == 0) {
+            houseSegment.setHouse2(houseSegment.getHouse1());
+            houseSegment.setHouse2Building(houseSegment.getHouse1Building());
+        }
+        if (Integer.valueOf(houseSegment.getHouse1()) > Integer.valueOf(houseSegment.getHouse2())) {
+            String exchangeNum = houseSegment.getHouse1();
+            String exchangeBuilding = houseSegment.getHouse1Building();
+            houseSegment.setHouse1(houseSegment.getHouse2());
+            houseSegment.setHouse1Building(houseSegment.getHouse2Building());
+            houseSegment.setHouse2(exchangeNum);
+            houseSegment.setHouse2Building(exchangeBuilding);
+        }
         houseSegmentDAO.addHouseSegment(houseSegment);
+        return IMessageConstants.SEGMENT_ADD;
+    }
+
+    public String deleteHouseSegment(int rn) {
+        houseSegmentDAO.deleteHouseSegment(rn);
+        return IMessageConstants.SEGMENT_DEL;
     }
 
 }
