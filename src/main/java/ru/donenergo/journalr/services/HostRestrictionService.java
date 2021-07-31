@@ -20,7 +20,6 @@ public class HostRestrictionService implements IHostRestrictionService, IDataToM
     private Integer hostResNum;
     private String hostRights;
     private String ipAddress;
-    public final String AUTHORIZED_MESSAGE = "Ok!";
     public final String FORBIDDEN_MESSAGE = "Недостаточно прав для внесения изменений!";
     static final Logger logger = LoggerFactory.getLogger(HostRestrictionService.class);
 

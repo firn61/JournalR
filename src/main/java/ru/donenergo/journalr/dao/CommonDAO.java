@@ -55,4 +55,5 @@ public class CommonDAO implements ICommonDAO, ISystemDAO{
         String queryTemplate = "UPDATE SYSTEM SET SVALUE = ? WHERE SPARAM = ?";
         jdbcTemplate.update(queryTemplate, new Object[]{sValue, sParam});
     }
+
 }

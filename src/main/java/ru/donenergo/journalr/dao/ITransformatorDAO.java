@@ -17,7 +17,7 @@ public interface ITransformatorDAO {
 
     Integer addIntermediateTransformator(Transformator transformator);
 
-    Integer addTransformatorToNewPeriod(Transformator transformator);
+    Integer addTransformatorToNewPeriod(int pRn, Transformator transformator);
 
     void updateTransformatorValues(Transformator transformator, String additionalPostfix);
 

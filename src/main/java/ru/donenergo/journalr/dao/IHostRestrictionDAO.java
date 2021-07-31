@@ -1,5 +1,8 @@
 package ru.donenergo.journalr.dao;
 
+import ru.donenergo.journalr.models.Host;
+
+import java.util.List;
 import java.util.Map;
 
 public interface IHostRestrictionDAO {
@@ -14,10 +17,12 @@ public interface IHostRestrictionDAO {
 
     Map<String, String> getUsers();
 
-    Map<String, String> getHosts();
+    List<Host> getHosts();
 
     void addReadOnlyRights(String ipAddress);
 
     void updateHost(String ipAddress, String rights);
+
+    List<String> getUsrNames();
 
 }

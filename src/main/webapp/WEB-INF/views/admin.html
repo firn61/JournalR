@@ -9,12 +9,16 @@
     <title>admin</title>
 </head>
 <body>
-<span class="text-center" style="color:green;font-weight:bold" th:if="${successMessage}"><p
-        th:text="${successMessage}"></p></span>
+<span class="text-center" style="color:green;font-weight:bold" th:each="msg: ${messages}">
+                <p th:text="${msg}"></p>
+            </span>
+<span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
+                <p th:text="${err}"></p>
+            </span>
 <form th:method="POST" th:action="@{/newperiod}">
     <button type="submit">Открыть новый период</button>
 </form>
-<form th:method="POST" th:action="@{/admin}" th:object="${adminService}">
+<form th:method="POST" th:action="@{/admin}" th:object="${systemParams}">
     <label for="currentDate">Текущий период:</label>
     <input type="number" name="currentDate" id="currentDate" th:field="*{currentDate}">
     <br>
@@ -24,17 +28,16 @@
     <label for="filesDir2">Директория 2:</label>
     <input type="text" name="filesDir2" id="filesDir2" th:field="*{filesDir2}">
     <br>
-    <div style="color:green;font-weight:bold" th:text="${statusMessage}" th:if="${statusMessage}"></div>
     <button type="submit">Сохранить системные параметры</button>
 </form>
 <br>
-<form th:method="POST" th:action="@{/hostsave}" th:object="${hosts}">
+<form th:method="POST" th:action="@{/hostsave}" th:object="${systemParams}">
     <button type="submit">Сохранить права доступа</button>
     <table>
-        <tr th:each="host, hstat : ${hosts.hosts}">
+        <tr th:each="host, hstat : ${systemParams.hosts}">
             <td><p th:text="${host.ip}"></td>
             <input type="hidden" th:field="*{hosts[__${hstat.index}__].ip}">
-            <td><input type="text" th:field="*{hosts[__${hstat.index}__].rights}"></td>
+            <td><input type ="text" th:field="*{hosts[__${hstat.index}__].rights}"></td>
         </tr>
     </table>
 </form>

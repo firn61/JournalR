@@ -4,6 +4,8 @@ import ru.donenergo.journalr.models.Line;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.models.Transformator;
 
+import java.util.List;
+
 public interface IPodstationDAO {
 
     Podstation getPodstation(int rn);
@@ -15,5 +17,7 @@ public interface IPodstationDAO {
     Integer addPodstation(Podstation podstation);
 
     void updatePodstationParams(Podstation podstation);
+
+    List<Podstation> getPodstations(int currentDate);
 
 }

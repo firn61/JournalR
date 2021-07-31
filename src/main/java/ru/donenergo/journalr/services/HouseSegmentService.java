@@ -38,22 +38,27 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         return streets;
     }
 
+    @Override
     public List<HouseSegment> getHouseSegment(Podstation podstation) {
         return houseSegmentDAO.getHouseSegment(podstation);
     }
 
+    @Override
     public List<HouseSegment> getHouseSegment(Podstation podstation, int trNum) {
         return houseSegmentDAO.getHouseSegment(podstation, trNum);
     }
 
+    @Override
     public List<HouseSegment> getHouseSegment(Street street) {
         return houseSegmentDAO.getHouseSegment(street);
     }
 
+    @Override
     public List<HouseSegment> getHouseSegment(Street street, Integer houseNum) {
         return houseSegmentDAO.getHouseSegment(street, houseNum);
     }
 
+    @Override
     public Street getStreet(String streetName) {
         if (streetName.contains(", ")) {
             String[] streetParams = streetName.split(", ");
@@ -61,6 +66,7 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         } else return new Street();
     }
 
+    @Override
     public String addHouseSegment(HouseSegment houseSegment) {
         if (houseSegment.getHouse1().equals("")) {
             houseSegment.setHouse1("0");
@@ -83,7 +89,7 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         houseSegmentDAO.addHouseSegment(houseSegment);
         return IMessageConstants.SEGMENT_ADD;
     }
-
+    @Override
     public String deleteHouseSegment(int rn) {
         houseSegmentDAO.deleteHouseSegment(rn);
         return IMessageConstants.SEGMENT_DEL;

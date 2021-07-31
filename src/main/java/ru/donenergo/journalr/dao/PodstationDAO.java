@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import ru.donenergo.journalr.mappers.PodstationMapper;
 import ru.donenergo.journalr.models.Podstation;
 
+import java.util.List;
+
 @Repository
 public class PodstationDAO implements IPodstationDAO{
 
@@ -49,5 +51,11 @@ public class PodstationDAO implements IPodstationDAO{
         String queryTemplate = "execute procedure PODST_UPDATE(?, ?)";
         jdbcTemplate.update(queryTemplate, new Object[]{podstation.getAddress(), podstation.getRn()});
     }
+
+    public List<Podstation> getPodstations(int currentDate) {
+        String queryTemplate = "SELECT RN, PODST_TYPE, NUM, NUM_STR, RES_NUM, DATE_RN, IS_ACTIVE, ADDRESS FROM PODSTATION WHERE DATE_RN=? ORDER BY PODST_TYPE, NUM";
+        return jdbcTemplate.query(queryTemplate, new Object[]{currentDate}, new PodstationMapper());
+    }
+
 
 }

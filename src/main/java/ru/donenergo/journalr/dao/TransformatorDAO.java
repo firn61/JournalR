@@ -49,9 +49,9 @@ public class TransformatorDAO implements ITransformatorDAO{
     }
 
     @Override
-    public Integer addTransformatorToNewPeriod(Transformator transformator) {
+    public Integer addTransformatorToNewPeriod(int pRn, Transformator transformator) {
         String queryTemplate = "execute procedure TRANS_INSERT(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, null, null)";
-        return jdbcTemplate.queryForObject(queryTemplate, new Object[]{transformator.getTpRn(), transformator.getNum(),
+        return jdbcTemplate.queryForObject(queryTemplate, new Object[]{pRn, transformator.getNum(),
                 transformator.getFider(), transformator.getPower()}, Integer.class);
     }
 
