@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ReportsDAO {
+public class ReportsDAO implements IReporstDAO{
 
     private final JdbcTemplate jdbcTemplate;
 

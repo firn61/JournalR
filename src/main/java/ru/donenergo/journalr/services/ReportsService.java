@@ -1,6 +1,7 @@
 package ru.donenergo.journalr.services;
 
 import org.springframework.stereotype.Service;
+import ru.donenergo.journalr.dao.IReporstDAO;
 import ru.donenergo.journalr.dao.ReportsDAO;
 import ru.donenergo.journalr.models.Podstation;
 
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ReportsService {
+public class ReportsService implements IReportsService {
 
     private final ReportsDAO reportsDAO;
 
@@ -17,6 +18,7 @@ public class ReportsService {
         this.reportsDAO = reportsDAO;
     }
 
+    @Override
     public  List<String[]> getBlankReportLines(Podstation podstation) {
         List<String[]> result = new ArrayList<>();
         int trNum = podstation.getTransformators().size();
@@ -41,10 +43,12 @@ public class ReportsService {
         return result;
     }
 
+    @Override
     public List<String[]> getReportAllPodstations(int currentDate){
         return reportsDAO.getReportAllPodstations(currentDate);
     }
 
+    @Override
     public List<String[]> getOverloadedPodstations(int currentDate){
         return reportsDAO.getOverloadedPodstations(currentDate);
     }

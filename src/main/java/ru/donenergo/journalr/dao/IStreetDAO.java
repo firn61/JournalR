@@ -13,4 +13,6 @@ public interface IStreetDAO {
 
     List<Street> getStreets();
 
+    Street getStreet(String streetName, String streetType);
+
 }

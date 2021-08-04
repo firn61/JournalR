@@ -7,6 +7,8 @@ public interface IMessageConstants {
     String PODSTATION_SAVED = "Подстанция сохранена";
     String PODSTATION_NOTNING_TO_SAVE = "Нет данных для сохранения";
     String PODSTATION_ALREADY_EXIST = "Подстанция уже существует";
+    String PODSTATION_NOT_FOUND_NP =  " не найдена в выбраном периоде";
+    String PODSTATION_NOT_FOUND = " не найдена";
     String TRANSFORMATOR_ADD = "Трансформатр добавлен";
     String TRANSFORMATOR_DEL = "Трансформатор удален";
     String LINE_ADD = "Линия добавлена";

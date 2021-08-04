@@ -45,10 +45,12 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         this.lineDAO = lineDAO;
     }
 
+    @Override
     public void refreshCurrentPodstation() {
         currentPodstation = getPodstation(currentPodstation.getRn());
     }
 
+    @Override
     public int getFirstTransformator() {
         if (currentPodstation.getTransformators() != null) {
             return 1;
@@ -109,7 +111,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             currentPodstation = getPodstation(podstationRn);
             return "ok";
         } catch (EmptyResultDataAccessException e) {
-            return "Подстанция " + currentPodstation.getPodstType() + "-" + currentPodstation.getNum() + " не найдена в выбраном периоде";
+            return currentPodstation.getPodstType() + "-" + currentPodstation.getNum() + IMessageConstants.PODSTATION_NOT_FOUND_NP;
         }
 
     }
@@ -121,14 +123,15 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             currentPodstation = getPodstation(podstationRn);
             return "ok";
         } catch (EmptyResultDataAccessException e) {
-            return "Подстанция " + podstType + "-" + num + " не найдена";
+            return podstType + "-" + num + IMessageConstants.PODSTATION_NOT_FOUND;
         }
     }
 
     @Override
     public void podstationRnCheck(int rn) {
         if (currentPodstation.getRn() != rn) {
-            logger.warn("podstation rn {} incorrect");
+            currentPodstation = getPodstation(rn);
+            logger.warn("current podstation updated to {}", rn);
         }
     }
 
@@ -350,6 +353,7 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
         return updated ? IMessageConstants.PODSTATION_SAVED : IMessageConstants.PODSTATION_NOTNING_TO_SAVE;
     }
 
+    @Override
     public BasicPodstation addPodstation(String podstType, int num, String address, int dateRn, int resNum) throws PodstationAlreadyExistException {
         Podstation podstation = new Podstation();
         podstation.setPodstType(podstType);
@@ -365,6 +369,6 @@ public class PodstationService implements IPodstationActions, ITransformatorActi
             throw new PodstationAlreadyExistException(IMessageConstants.PODSTATION_ALREADY_EXIST);
         }
         return podstation.convertToBasic();
-
     }
+
 }

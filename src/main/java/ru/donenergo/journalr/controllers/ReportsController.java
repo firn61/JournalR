@@ -9,7 +9,7 @@ import ru.donenergo.journalr.services.PodstationService;
 import ru.donenergo.journalr.services.ReportsService;
 
 @Controller
-public class ReportsController {
+public class ReportsController implements IReportsController{
 
     private final PodstationService podstationService;
     private final ReportsService reportsService;
@@ -21,7 +21,7 @@ public class ReportsController {
         this.commonService = commonService;
     }
 
-    @GetMapping("/measureblankreport")
+    @Override
     public String getMeasureBlankReport(Model model) {
         Podstation currentPodstation = podstationService.getCurrentPodstation();
         int transformatorsCount = currentPodstation.getTransformators().size();
@@ -36,13 +36,13 @@ public class ReportsController {
         }
     }
 
-    @GetMapping("/reportall")
+    @Override
     public String getReportAllPodstations(Model model){
         model.addAttribute("reportElements", reportsService.getReportAllPodstations(commonService.getCurrentPeriod()));
         return "reportall";
     }
 
-    @GetMapping("/overloadreport")
+    @Override
     public String getOverloadPodstations(Model model){
         model.addAttribute("overloaded", reportsService.getOverloadedPodstations(commonService.getCurrentPeriod()));
         return "overloadreport";

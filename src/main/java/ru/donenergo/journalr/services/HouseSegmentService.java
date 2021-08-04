@@ -31,6 +31,7 @@ public class HouseSegmentService implements IHouseSegmentService, IDataToModelSe
         model.addAttribute("streets", getStreets());
     }
 
+    @Override
     public List<Street> getStreets() {
         if (streets == null) {
             streets = houseSegmentDAO.getStreets();

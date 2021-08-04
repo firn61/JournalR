@@ -26,10 +26,10 @@ public class CommonService implements ICommonService, IDataToModelSetter {
     private List<BasicPodstation> basicPodstationLabels;
     private List<String> podstationTypes;
     private List<Period> periods;
-    private String currentActivity;
     private Activity activity;
     private List<String> messages = new ArrayList<>();
     private List<String> errors = new ArrayList<>();
+
     static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     @Autowired
@@ -38,13 +38,14 @@ public class CommonService implements ICommonService, IDataToModelSetter {
     }
 
     @PostConstruct
-    private void invokeValues() {
+    public void invokeValues() {
         activity = Activity.INDEX;
         currentPeriod = getCurrentPeriodFromDB();
         refreshCommonValues(currentPeriod);
         periods = getPeriodsFromDB(currentPeriod);
     }
 
+    @Override
     public void refreshCommonValues(int currentPeriod) {
         logger.info("refreshing commonValues for {} period", currentPeriod);
         this.currentPeriod = currentPeriod;
@@ -65,17 +66,19 @@ public class CommonService implements ICommonService, IDataToModelSetter {
         model.addAttribute("currentPeriod", getCurrentPeriod());
     }
 
+    @Override
     public void addMessage(String message) {
         messages.add(message);
     }
 
+    @Override
     public void addError(String error) {
         if (!error.equals("ok")) {
             errors.add(error);
         }
     }
 
-
+    @Override
     public String getViewName(int rn) {
         if (rn == 0) {
             return "";
@@ -99,10 +102,12 @@ public class CommonService implements ICommonService, IDataToModelSetter {
         }
     }
 
+    @Override
     public void addBasicPodstatinLabel(BasicPodstation newBasicPodstation) {
         basicPodstationLabels.add(newBasicPodstation);
     }
 
+    @Override
     public void changeViewIfIndex() {
         if (activity.equals(Activity.INDEX)) {
             activity = Activity.SHOW_PODSTATION;
@@ -159,14 +164,6 @@ public class CommonService implements ICommonService, IDataToModelSetter {
 
     public void setPeriods(List<Period> periods) {
         this.periods = periods;
-    }
-
-    public String getCurrentActivity() {
-        return currentActivity;
-    }
-
-    public void setCurrentActivity(String currentActivity) {
-        this.currentActivity = currentActivity;
     }
 
     public Activity getActivity() {

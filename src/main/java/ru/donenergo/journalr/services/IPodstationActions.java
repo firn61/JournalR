@@ -1,5 +1,7 @@
 package ru.donenergo.journalr.services;
 
+import ru.donenergo.journalr.exceptions.PodstationAlreadyExistException;
+import ru.donenergo.journalr.models.BasicPodstation;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.models.Transformator;
 
@@ -19,4 +21,10 @@ public interface IPodstationActions {
 
     String updatePodstationParams(Podstation savingPodstation);
 
+    BasicPodstation addPodstation(String podstType, int num, String address, int dateRn, int resNum)
+            throws PodstationAlreadyExistException;
+
+    int getFirstTransformator();
+
+    void refreshCurrentPodstation();
 }

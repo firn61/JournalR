@@ -37,6 +37,7 @@ public class HostRestrictionService implements IHostRestrictionService, IDataToM
             logger.info("invoked values: resName: {}, hostResNum: {}, hostRights: {}", resName, hostResNum, hostRights);
         }
     }
+
     @Override
     public void setDataToModel(Model model) {
         logger.info("values added to model: resName: {}, {}", resName, hostResNum);

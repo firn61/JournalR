@@ -77,6 +77,7 @@ public class HouseSegmentDAO implements IHouseSegmentDAO, IStreetDAO {
         return jdbcTemplate.query("SELECT RN, STREET_NAME, STREET_TYPE, POSTCODE FROM STREETS", new StreetMapper());
     }
 
+    @Override
     public Street getStreet(String streetName, String streetType) {
         String queryTemplate = "SELECT RN, STREET_NAME, STREET_TYPE, POSTCODE FROM STREETS WHERE STREET_NAME = ? AND STREET_TYPE = ?";
         return jdbcTemplate.queryForObject(queryTemplate, new Object[]{streetName, streetType}, new StreetMapper());

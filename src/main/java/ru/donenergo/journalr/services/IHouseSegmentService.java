@@ -22,4 +22,6 @@ public interface IHouseSegmentService {
 
     String deleteHouseSegment(int rn);
 
+    List<Street> getStreets();
+
 }

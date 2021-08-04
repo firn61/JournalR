@@ -15,8 +15,13 @@
 <span class="text-center" style="color:red;font-weight:bold" th:each="err: ${errors}">
                 <p th:text="${err}"></p>
             </span>
+
+<form th:method="GET" th:action="@{/}">
+    <button type="submit">Назад</button>
+</form>
 <form th:method="POST" th:action="@{/newperiod}">
-    <button type="submit">Открыть новый период</button>
+    <button type="submit"
+            th:onclick="return confirm('Сделать бэкап! Дождаться завершения копирования! ~10 минут!');">Открыть новый период</button>
 </form>
 <form th:method="POST" th:action="@{/admin}" th:object="${systemParams}">
     <label for="currentDate">Текущий период:</label>

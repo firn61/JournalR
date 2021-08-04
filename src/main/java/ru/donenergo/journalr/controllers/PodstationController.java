@@ -121,6 +121,7 @@ public class PodstationController implements IPodstationController, IDataWrapper
                     commonService.getCurrentPeriod(), hostRestrictionService.getHostResNum());
             commonService.addBasicPodstatinLabel(basicPodstation);
         } catch (PodstationAlreadyExistException e) {
+            commonService.addError(e.getMessage());
             logger.info(e.getMessage());
         }
         model.addAttribute("rn", podstationService.getCurrentPodstationRn());

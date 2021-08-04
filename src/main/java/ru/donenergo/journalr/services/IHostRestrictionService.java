@@ -5,4 +5,5 @@ public interface IHostRestrictionService {
     String getHostRightsFromDAO(String ipAddress);
 
 
+
 }
