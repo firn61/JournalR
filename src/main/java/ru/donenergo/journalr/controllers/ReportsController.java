@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.donenergo.journalr.models.Podstation;
 import ru.donenergo.journalr.services.CommonService;
+import ru.donenergo.journalr.services.HostRestrictionService;
 import ru.donenergo.journalr.services.PodstationService;
 import ru.donenergo.journalr.services.ReportsService;
 
@@ -14,11 +15,24 @@ public class ReportsController implements IReportsController{
     private final PodstationService podstationService;
     private final ReportsService reportsService;
     private final CommonService commonService;
+    private final HostRestrictionService hostRestrictionService;
 
-    public ReportsController(PodstationService podstationService, ReportsService reportsService, CommonService commonService) {
+    public ReportsController(PodstationService podstationService, ReportsService reportsService,
+                             CommonService commonService, HostRestrictionService hostRestrictionService) {
         this.podstationService = podstationService;
         this.reportsService = reportsService;
         this.commonService = commonService;
+        this.hostRestrictionService = hostRestrictionService;
+    }
+
+    @Override
+    public String getMeasureReport(Model model){
+        Podstation currentPodstation = podstationService.getCurrentPodstation();
+        model.addAttribute("currentPodstation", currentPodstation);
+        model.addAttribute("res", hostRestrictionService.getResName());
+        model.addAttribute("date", commonService.getPeriods().get(commonService.getCurrentPeriod()-1));
+        model.addAttribute("measureTable", reportsService.getMeasureReport(currentPodstation));
+        return "measurereport";
     }
 
     @Override

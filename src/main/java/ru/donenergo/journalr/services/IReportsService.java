@@ -11,4 +11,6 @@ public interface IReportsService {
     List<String[]> getReportAllPodstations(int currentDate);
 
     List<String[]> getOverloadedPodstations(int currentDate);
+
+    List<String[]> getMeasureReport(Podstation p);
 }

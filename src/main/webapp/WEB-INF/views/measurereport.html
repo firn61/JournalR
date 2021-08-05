@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ведомость контрольного замера</title>
+    <style>
+        table, th, td {
+            border: 1px solid #000000;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h4 align="left">
+    <div>Филиал АО "Донэнерго" РГЭС</div>
+    <div th:text="'Подразделение: ' + ${res} + ', ' + ${date}"></div>
+    <div th:text="'Ведомость контрольного замера нагрузок, напряжений по ' + ${currentPodstation.podstType} + '-' + ${currentPodstation.numStr} + ', ' + ${currentPodstation.address}"></div>
+</h4>
+<table>
+    <tr>
+        <th>№ тр-ра, мощность, (кВа)</th>
+        <th>Фаза</th>
+        <th>Напряжение, (В)</th>
+        <th>Ток, (А)</th>
+        <th>Линии</th>
+        <th>Положение ком. аппарата</th>
+        <th>Ia, (A)</th>
+        <th>Ib, (A)</th>
+        <th>Ic, (A)</th>
+        <th>Io, (A)</th>
+        <th>Дата, время замера</th>
+    </tr>
+    <tr th:each="list : ${measureTable}">
+        <td><span th:text="${list[0]}"></span></td>
+        <td><span th:text="${list[1]}"></span></td>
+        <td><span th:text="${list[2]}"></span></td>
+        <td><span th:text="${list[3]}"></span></td>
+        <td><span th:text="${list[4]}"></span></td>
+        <td><span th:text="${list[5]}"></span></td>
+        <td><span th:text="${list[6]}"></span></td>
+        <td><span th:text="${list[7]}"></span></td>
+        <td><span th:text="${list[8]}"></span></td>
+        <td><span th:text="${list[9]}"></span></td>
+        <td><span th:text="${list[10]}"></span></td>
+    </tr>
+</table>
+</body>
+</html>

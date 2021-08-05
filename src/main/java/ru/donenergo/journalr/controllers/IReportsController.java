@@ -13,4 +13,7 @@ public interface IReportsController {
 
     @GetMapping("/overloadreport")
     String getOverloadPodstations(Model model);
+
+    @GetMapping("/measurereport")
+    String getMeasureReport(Model model);
 }
