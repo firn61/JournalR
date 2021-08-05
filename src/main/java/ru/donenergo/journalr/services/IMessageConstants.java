@@ -19,5 +19,6 @@ public interface IMessageConstants {
     String SEGMENT = "Сегменты ";
     String SEGMENT_ADD = "Сегмент добавлен";
     String SEGMENT_DEL = "Сегмент удален";
+    String GEO_NOT_FOUND = "Подстанция не найдена на карте";
 
 }

@@ -96,6 +96,8 @@ public class CommonService implements ICommonService, IDataToModelSetter {
                     return "showhousesegment";
                 case EDIT_HOUSE_SEGMENT:
                     return "edithousesegment";
+                case SHOW_GEO:
+                    return "map";
                 default:
                     return "index";
             }
